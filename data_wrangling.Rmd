@@ -250,8 +250,6 @@ box_plot_2021
 ```
 
 
-
-
 ##Questions
 1 The concentration of covid for each station on average
 2 literature review foe two diff tech (RT-qPCR, dPCR)
