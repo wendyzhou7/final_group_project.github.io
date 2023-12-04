@@ -1416,7 +1416,8 @@ RT-qPCR
                         &quot;11&quot; = &quot;November&quot;,
                         &quot;12&quot; = &quot;December&quot;)) |&gt;
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)</code></pre>
-<p>Regression part</p>
+<p>Regression part Manhattan, Brooklyn, Bronx, Queens, Staten Island is
+assigned 0-4, Manhattan is assigned as reference</p>
 <pre class="r"><code>borough_wastewater &lt;-
   nyc_wastewater |&gt;
   filter(year %in% c(2021, 2022), technology == &quot;RT-qPCR&quot;) |&gt;
@@ -1439,9 +1440,56 @@ RT-qPCR
                          &quot;Tallman Island&quot; ~ &quot;Queens&quot;,
                          &quot;Wards Island&quot; ~ &quot;Manhattan&quot;
                          )
-  )</code></pre>
+  ) |&gt;
+  mutate (borough_id = as.factor(case_match(
+      boroughs,
+      &quot;Manhattan&quot; ~ 0,
+      &quot;Brooklyn&quot; ~ 1,
+      &quot;Bronx&quot; ~ 2,
+      &quot;Queens&quot; ~ 3,
+      &quot;Staten Island&quot; ~ 4
+    ))
+    )</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;year&#39;. You can override using the
 ## `.groups` argument.</code></pre>
+<p>Creating dataset for regression analysis, assigned months to seasons
+and use summer as reference.</p>
+<pre class="r"><code>data_reg &lt;-
+  borough_wastewater |&gt;
+  mutate (season = case_match(month,
+                        &quot;January&quot; ~ &quot;Winter&quot;,
+                        &quot;February&quot; ~ &quot;Winter&quot;,
+                        &quot;March&quot; ~ &quot;Spring&quot;,
+                        &quot;April&quot; ~ &quot;Spring&quot;,
+                        &quot;May&quot; ~ &quot;Spring&quot;,
+                        &quot;June&quot; ~ &quot;Summer&quot;,
+                        &quot;July&quot; ~ &quot;Summer&quot;,
+                        &quot;August&quot; ~ &quot;Summer&quot;,
+                        &quot;September&quot; ~ &quot;Autumn&quot;,
+                        &quot;October&quot; ~ &quot;Autumn&quot;,
+                        &quot;November&quot; ~ &quot;Autumn&quot;,
+                        &quot;December&quot; ~ &quot;Winter&quot;)) |&gt;
+  mutate (season_id = as.factor(case_match(
+      season,
+      &quot;Summer&quot; ~ 0,
+      &quot;Autumn&quot; ~ 1,
+      &quot;Winter&quot; ~ 2,
+      &quot;Spring&quot; ~ 3,
+    ))
+    )</code></pre>
+<p>Running ANOVA</p>
+<pre class="r"><code>model_anova &lt;- aov(avg_conc ~ borough_id, data = borough_wastewater)
+summary(model_anova)</code></pre>
+<pre><code>##              Df    Sum Sq   Mean Sq F value Pr(&gt;F)
+## borough_id    4 2.029e+08  50718771   0.469  0.759
+## Residuals   331 3.581e+10 108189467</code></pre>
+<pre class="r"><code>model_anova1 &lt;- aov(avg_conc ~ season_id, data = data_reg)
+summary(model_anova1)</code></pre>
+<pre><code>##              Df    Sum Sq   Mean Sq F value Pr(&gt;F)    
+## season_id     3 8.192e+09 2.731e+09   32.58 &lt;2e-16 ***
+## Residuals   332 2.782e+10 8.380e+07                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 
 
 

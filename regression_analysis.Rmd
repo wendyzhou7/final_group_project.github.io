@@ -116,6 +116,7 @@ nyc_wastewater <-
 
 
 Regression part
+Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4, Manhattan is assigned as reference
 ```{r}
 borough_wastewater <-
   nyc_wastewater |>
@@ -139,7 +140,56 @@ borough_wastewater <-
                          "Tallman Island" ~ "Queens",
                          "Wards Island" ~ "Manhattan"
                          )
-  )
+  ) |>
+  mutate (borough_id = as.factor(case_match(
+      boroughs,
+      "Manhattan" ~ 0,
+      "Brooklyn" ~ 1,
+      "Bronx" ~ 2,
+      "Queens" ~ 3,
+      "Staten Island" ~ 4
+    ))
+    )
   
+```
+
+Creating dataset for regression analysis, assigned months to seasons and use summer as reference.
+```{r}
+data_reg <-
+  borough_wastewater |>
+  mutate (season = case_match(month,
+                        "January" ~ "Winter",
+                        "February" ~ "Winter",
+                        "March" ~ "Spring",
+                        "April" ~ "Spring",
+                        "May" ~ "Spring",
+                        "June" ~ "Summer",
+                        "July" ~ "Summer",
+                        "August" ~ "Summer",
+                        "September" ~ "Autumn",
+                        "October" ~ "Autumn",
+                        "November" ~ "Autumn",
+                        "December" ~ "Winter")) |>
+  mutate (season_id = as.factor(case_match(
+      season,
+      "Summer" ~ 0,
+      "Autumn" ~ 1,
+      "Winter" ~ 2,
+      "Spring" ~ 3,
+    ))
+    )
+```
+
+
+Running ANOVA
+
+```{r Anova for boroughs}
+model_anova <- aov(avg_conc ~ borough_id, data = borough_wastewater)
+summary(model_anova)
+
+```
+```{r Anova for seasons}
+model_anova1 <- aov(avg_conc ~ season_id, data = data_reg)
+summary(model_anova1)
 ```
 
