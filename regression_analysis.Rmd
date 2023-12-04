@@ -1,0 +1,145 @@
+---
+title: "Regression and Analysis"
+author: "Jianing Liu"
+date: "2023-12-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(readxl)
+library(lubridate)
+library(leaflet)
+library(plotly)
+library(readr)
+library(knitr)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 16, 
+  fig.height = 12,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+
+```{r load the data files}
+map <-
+  read_csv("data/HydroWASTE_v10.csv")
+
+head(map) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
+  
+
+wwtp <-
+  read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
+
+head(wwtp) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
+```
+
+
+```{r clean the mapping data file and rename plant names}
+map_df <-
+  map |>
+  janitor::clean_names() |>
+  select(waste_id, wwtp_name, lat_wwtp, lon_wwtp) |>
+  mutate(wrrf_abbreviation = recode( wwtp_name,
+    "New York C   Rockaway WPCP" = "RK",
+    "New York C   Red Hook WPCP" = "RH",
+    "New York C   Port Richmond WPCP" = "PR",
+    "New York C   Oakwood Beach WPCP" = "OB",
+    "New York C   26th Ward WPCP" = "26W",
+    "New York C   Tallman Island WPCP" = "TI",
+    "New York C   North River WPCP" = "NR",
+    "New York C   Coney Island WPCP" = "CI",
+    "New York C   Jamaica WPCP" = "JA",
+    "New York C   Hunts Point WPCP" = "HP",
+    "New York C   Owls Head WPCP" = "OH",
+    "New York C   Bowery Bay WPCP" = "BB",
+    "New York C   Newtown Creek WPCP" = "NC",
+    "New York C   Wards Island WPCP" = "WI",
+  ))
+```
+
+```{r clean the waste water data file}
+wwtp_df <-
+  wwtp |>
+  janitor:: clean_names()
+```
+
+```{r merge the waste water data file and mapping data file}
+merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
+```
+
+```{r choose the variables from the merged data file}
+nyc_wastewater <-
+  merge_df |>
+  rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
+  drop_na(concentration) |>
+  separate(sample_date, into = c("month", "day", "year"), convert = TRUE) %>% 
+   mutate(
+     year = as.character(year),
+     month = factor(month, levels = 1:12),
+     month = recode(month,
+                        "1" = "January",
+                        "2" = "February",
+                        "3" = "March",
+                        "4" = "April",
+                        "5" = "May",
+                        "6" = "June",
+                        "7" = "July",
+                        "8" = "August",
+                        "9" = "September",
+                        "10" = "October",
+                        "11" = "November",
+                        "12" = "December")) |>
+  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)
+```
+
+
+Regression part
+```{r}
+borough_wastewater <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate(
+    boroughs = case_match(wrrf_name,
+                         "26th Ward" ~ "Brooklyn",
+                         "Bowery Bay" ~ "Manhattan",
+                         "Coney Island" ~ "Brooklyn",
+                         "Hunts Point" ~ "Bronx",
+                         "Jamaica Bay" ~ "Queens",
+                         "Newtown Creek" ~ "Queens",
+                         "North River" ~ "Manhattan",
+                         "Oakwood Beach" ~ "Staten Island",
+                         "Owls Head" ~ "Brooklyn",
+                         "Port Richmond" ~ "Staten Island",
+                         "Red Hook" ~ "Brooklyn",
+                         "Rockaway" ~ "Queens",
+                         "Tallman Island" ~ "Queens",
+                         "Wards Island" ~ "Manhattan"
+                         )
+  )
+  
+```
+
