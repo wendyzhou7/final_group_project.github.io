@@ -38,20 +38,24 @@ scale_fill_discrete = scale_fill_viridis_d
 map <-
   read_csv("data/HydroWASTE_v10.csv")
 
-head(map) |>
-  knitr::kable()
+head(map) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
   
 
 wwtp <-
   read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
 
-head(wwtp) |>
-  knitr::kable()
+head(wwtp) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
 ```
 
 
 ```{r clean the mapping data file and rename plant names}
-map_new <-
+map_df <-
   map |>
   janitor::clean_names() |>
   select(waste_id, wwtp_name, lat_wwtp, lon_wwtp) |>
@@ -74,17 +78,17 @@ map_new <-
 ```
 
 ```{r clean the waste water data file}
-wwtp_cleaned <-
+wwtp_df <-
   wwtp |>
   janitor:: clean_names()
 ```
 
 ```{r merge the waste water data file and mapping data file}
-merge_df <- inner_join(map_new, wwtp_cleaned, by = "wrrf_abbreviation")
+merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
 ```
 
 ```{r choose the variables from the merged data file}
-nyc_wwtp <-
+nyc_wastewater <-
   merge_df |>
   rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
   drop_na(concentration) |>
@@ -105,9 +109,12 @@ nyc_wwtp <-
                         "10" = "October",
                         "11" = "November",
                         "12" = "December")) |>
-  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name)
+  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
 
-nyc_wwtp
+head(nyc_wastewater) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
 ```
 
 
@@ -115,21 +122,21 @@ Creating the dataset for an overall trend for Covid-19 concentration across the 
 
 ```{r}
 overall_trend <-
-  nyc_wwtp |>
+  nyc_wastewater |>
   filter(technology == "RT-qPCR") |>
-  select(-lat_wwtp, -lon_wwtp, -annotation) |>
+  select(-lat_wwtp, -lon_wwtp) |>
   group_by(year, month) |>
   summarise(avg_conc = mean(concentration)) |>
   unite("year_month",year, month, sep = "_") |>
-  mutate(Month = ymd(paste0(year_month, "_01")))
+  mutate(month_avg = ymd(paste0(year_month, "_01")))
 ```
 Plotting Scatterplot
 
 ```{r}
 overall_trend |>
-  ggplot(aes(x = Month, y = avg_conc)) + 
-  geom_point(color = c("#FFA500")) +
-  geom_smooth(se = FALSE, color = "dark grey") +
+  ggplot(aes(x = month_avg, y = avg_conc)) + 
+  geom_point(size = 3, alpha = .7) +
+  geom_smooth(size = 2, se = FALSE, alpha = .3) +
     labs(
       x = "Time", 
       y = "Monthly average Covid-19 concentration in waste water in NY (N/L)") + 
@@ -142,38 +149,23 @@ overall_trend |>
 ```
 
 
-Histogram
-
-```{r}
-overall_trend |>
-  ggplot(aes(x = year_month, y = avg_conc)) +
-  geom_col(position = "dodge") +
-  stat_summary(fun = mean, geom = "line", aes(group = 1), color = "orange", size = 1) +
-  labs(x = "Year-Month", y = "Average Concentration") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, color = "black"))
-```
-
-
-
-
-
 Sub dataset
 ```{r}
 rtqpcr <-
-  nyc_wwtp |>
+  nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
-  select(-lat_wwtp, -lon_wwtp, -annotation)
+  select(-lat_wwtp, -lon_wwtp)
 
 dpcr <-
-  nyc_wwtp |>
+  nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "dPCR") |>
-  select(-lat_wwtp, -lon_wwtp, -annotation)
+  select(-lat_wwtp, -lon_wwtp)
 ```
 dpcr is not large enough to do data analysis.
 
 data analysis
 ```{r}
-trend_plot_2021 <-
+spaghetti_plot_2021 <-
   rtqpcr |>
   filter(year == 2021) |>
   group_by(month, wrrf_name) |>
@@ -187,7 +179,7 @@ trend_plot_2021 <-
   theme(legend.position = "bottom",
         legend.box.background = element_rect())
 
-trend_plot_2021
+spaghetti_plot_2021
 ```
 
 
@@ -195,7 +187,7 @@ trend_plot_2021
 
 trend_plot_2022
 ```{r}
-trend_plot_2022 <-
+spaghetti_plot_2022 <-
   rtqpcr |>
   filter(year == 2022) |>
   group_by(month, wrrf_name) |>
@@ -209,12 +201,12 @@ trend_plot_2022 <-
   theme(legend.position = "bottom",
         legend.box.background = element_rect())
 
-trend_plot_2022
+spaghetti_plot_2022
 ```
 
 tables 2021
 ```{r}
-box_2021 <- rtqpcr %>%
+box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
   group_by(month, wrrf_name) %>%
   summarise(avg_conc = mean(concentration)) %>%
@@ -231,13 +223,13 @@ box_2021 <- rtqpcr %>%
     showlegend = FALSE
   )
 
-box_2021
+box_plot_2021
 
 ```
 
 tables 2022
 ```{r}
-box_2022 <- rtqpcr %>%
+box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%
   group_by(month, wrrf_name) %>%
   summarise(avg_conc = mean(concentration)) %>%
@@ -254,44 +246,10 @@ box_2022 <- rtqpcr %>%
     showlegend = FALSE
   )
 
-box_2021
+box_plot_2021
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-nyc_wwtp |>
-  filter(year == 2022, technology == "RT-qPCR") |>
-  group_by(month, wrrf_abbreviation) |>
-  ggplot(aes(x = month, y = concentration, color = wrrf_abbreviation)) +
-  geom_point(alpha = .5)
-```
-
-
-
-```{r}
-library(leaflet)
-wwtp_map <-
-  nyc_wwtp |>
-  leaflet() |>
-  addTiles() |>
-  addMarkers(
-    ~lon_wwtp, ~lat_wwtp
-  )
-
-wwtp_map
-```
-14 wwtps map
 
 
 ##Questions
