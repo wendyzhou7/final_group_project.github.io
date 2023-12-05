@@ -15,6 +15,7 @@ library(leaflet)
 library(plotly)
 library(readr)
 library(knitr)
+library(broom)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -116,6 +117,7 @@ nyc_wastewater <-
 
 
 Regression part
+Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4, Manhattan is assigned as reference
 ```{r}
 borough_wastewater <-
   nyc_wastewater |>
@@ -139,7 +141,103 @@ borough_wastewater <-
                          "Tallman Island" ~ "Queens",
                          "Wards Island" ~ "Manhattan"
                          )
-  )
+  ) |>
+  mutate (borough_id = as.factor(case_match(
+      boroughs,
+      "Manhattan" ~ 0,
+      "Brooklyn" ~ 1,
+      "Bronx" ~ 2,
+      "Queens" ~ 3,
+      "Staten Island" ~ 4
+    ))
+    )
   
+```
+
+Creating dataset for regression analysis, assigned months to seasons and use summer as reference.
+```{r}
+data_reg <-
+  borough_wastewater |>
+  mutate (season = case_match(month,
+                        "January" ~ "Winter",
+                        "February" ~ "Winter",
+                        "March" ~ "Spring",
+                        "April" ~ "Spring",
+                        "May" ~ "Spring",
+                        "June" ~ "Summer",
+                        "July" ~ "Summer",
+                        "August" ~ "Summer",
+                        "September" ~ "Autumn",
+                        "October" ~ "Autumn",
+                        "November" ~ "Autumn",
+                        "December" ~ "Winter")) |>
+  mutate (season_id = as.factor(case_match(
+      season,
+      "Summer" ~ 0,
+      "Autumn" ~ 1,
+      "Winter" ~ 2,
+      "Spring" ~ 3,
+    ))
+    )
+```
+
+
+Running ANOVA
+
+```{r Anova for boroughs}
+model_anova <- aov(avg_conc ~ borough_id, data = borough_wastewater)
+summary(model_anova)
+
+```
+```{r Anova for seasons}
+model_anova1 <- aov(avg_conc ~ season_id, data = data_reg)
+summary(model_anova1)
+```
+
+
+Regression models
+
+Regression analysis
+
+
+model_reg = glm(avg_conc ~ season_id + borough_id, data = data_reg)
+
+model_dataset <-
+  model_reg |>
+  broom::tidy() |>
+knitr::kable(digits = 3)
+
+
+
+log_beta = model_reg |>
+  nest(data = )
+  broom::tidy() |>
+  summarise(lower_CI = exp(estimate - 1.96 * std.error),
+            upper_CI = exp(estimate + 1.96 * std.error)) |>
+  knitr::kable(digits = 3)
+
+logit_model = model_reg |>
+  mutate(
+logit_model = map(.x = data, ~glm(avg_conc ~ season_id + borough_id, data = data_reg)),
+  logit_results = map(logit_model, broom::tidy))
+
+
+
+confidence_interval=
+  model_dataset %>%
+  mutate(season_id = as.factor(season_id),
+         borough_id = as.factor(borough_id),
+         season_id = factor(season_id, levels = 0:3),
+         borough_id = factor(borough_id, levels = 0:4)) %>% 
+  summarise(OR = exp(estimate),
+            lower_CI = exp(estimate - 1.96 * std.error),
+            upper_CI = exp(estimate + 1.96 * std.error))
+confidence_intterval 
+  
+```{r}
+```
+
+
+```{r}
 ```
 
