@@ -1,0 +1,12 @@
+---
+title: "Holy cow!"
+output:
+  html_document:
+    toc: true
+    code_folding: hide
+    toc_float: true
+---
+
+### I have a webpage!
+
+And I can put all kinds of stuff on it!

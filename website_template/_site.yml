@@ -1,0 +1,21 @@
+name: "Final project p8105"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "Final Report"
+      href: report.html
+    - text: "Data Visualization"
+      href: data_visualization.html
+    - text: "Interactive Map"
+      href: map.html
+    - text: "Models"
+    - text: "Regression Models"
+      href: statistical_analysis.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<bh2852@cumc.columbia.edu; wz2630@cumc.columbia.edu; al4327@cumc.columbia.edu; yy3295@cumc.columbia.edu; jl6325@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: https://github.com/wendyzhou7/final_group_project.github.io
+output:
+  html_document:
+    theme: flatly
