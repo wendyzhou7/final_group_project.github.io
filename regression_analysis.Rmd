@@ -170,9 +170,7 @@ data_reg =
                         "September" ~ "Autumn",
                         "October" ~ "Autumn",
                         "November" ~ "Autumn",
-                        "December" ~ "Winter"))
-data = 
-data_reg %>% 
+                        "December" ~ "Winter")) %>% 
   mutate (season_id = as.factor(case_match(
       season,
       "Summer" ~ 0,
@@ -184,10 +182,9 @@ data_reg %>%
 ```
 
 
-
 ```{r}
 data_fit_logistic =
-  glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data, family = gaussian)
+  glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg, family = gaussian)
 
 summary(data_fit_logistic)
 
@@ -215,6 +212,7 @@ model_anova1 <- aov(avg_conc ~ season_id, data = data_reg)
 summary(model_anova1)
 ```
 
+git config --global pull.rebase false
 
 Regression models
 
@@ -256,6 +254,7 @@ confidence_interval=
 confidence_intterval 
   
 ```{r}
+
 ```
 
 
