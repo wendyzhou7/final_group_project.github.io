@@ -156,8 +156,8 @@ borough_wastewater <-
 
 Creating dataset for regression analysis, assigned months to seasons and use summer as reference.
 ```{r}
-data_reg <-
-  borough_wastewater |>
+data_reg =
+  borough_wastewater %>% 
   mutate (season = case_match(month,
                         "January" ~ "Winter",
                         "February" ~ "Winter",
@@ -170,15 +170,36 @@ data_reg <-
                         "September" ~ "Autumn",
                         "October" ~ "Autumn",
                         "November" ~ "Autumn",
-                        "December" ~ "Winter")) |>
+                        "December" ~ "Winter"))
+data = 
+data_reg %>% 
   mutate (season_id = as.factor(case_match(
       season,
       "Summer" ~ 0,
       "Autumn" ~ 1,
       "Winter" ~ 2,
-      "Spring" ~ 3,
+      "Spring" ~ 3
     ))
     )
+```
+
+
+
+```{r}
+data_fit_logistic =
+  glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data, family = gaussian)
+
+summary(data_fit_logistic)
+
+data_fit_logistic |>
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+```
+
+
+
+```{r}
+
 ```
 
 
