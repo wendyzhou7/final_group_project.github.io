@@ -1,5 +1,5 @@
 ---
-title: "data visualization"
+title: "Data Visualization"
 output:
   html_document:
     toc: true
@@ -46,7 +46,6 @@ head(map) %>%
   knitr::kable(digits = 3) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
-  
 
 wwtp <-
   read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
@@ -56,7 +55,6 @@ head(wwtp) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-
 
 ```{r clean the mapping data file and rename plant names}
 map_df <-
@@ -134,7 +132,8 @@ overall_trend <-
   unite("year_month",year, month, sep = "_") |>
   mutate(month_avg = ymd(paste0(year_month, "_01")))
 ```
-Plotting Scatterplot
+
+### Plotting Scatterplot
 
 ```{r}
 overall_trend |>
@@ -152,8 +151,8 @@ overall_trend |>
   ggtitle("Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023")
 ```
 
+### Sub dataset
 
-Sub dataset
 ```{r}
 rtqpcr <-
   nyc_wastewater |>
@@ -167,7 +166,8 @@ dpcr <-
 ```
 dpcr is not large enough to do data analysis.
 
-data analysis
+### trend_plot_2021
+
 ```{r}
 spaghetti_plot_2021 <-
   rtqpcr |>
@@ -186,10 +186,8 @@ spaghetti_plot_2021 <-
 spaghetti_plot_2021
 ```
 
+### trend_plot_2022
 
-
-
-trend_plot_2022
 ```{r}
 spaghetti_plot_2022 <-
   rtqpcr |>
@@ -208,7 +206,8 @@ spaghetti_plot_2022 <-
 spaghetti_plot_2022
 ```
 
-tables 2021
+### tables 2021
+
 ```{r}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
@@ -231,7 +230,8 @@ box_plot_2021
 
 ```
 
-tables 2022
+### tables 2022
+
 ```{r}
 box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%
@@ -253,8 +253,7 @@ box_plot_2022 <- rtqpcr %>%
 box_plot_2021
 ```
 
-
-##Questions
+## Questions
 1 The concentration of covid for each station on average
 2 literature review foe two diff tech (RT-qPCR, dPCR)
 3 Year 2021 and 2022
