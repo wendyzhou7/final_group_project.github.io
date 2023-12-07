@@ -7,11 +7,25 @@ output:
     toc_float: true
 ---
 
-### I have a webpage!
+<br />
 
-And I can put all kinds of stuff on it!
+### Background
 
-
+And I can put all kinds of stuff on it! 
 
 <center>
-![](image/waste_water_1.png){width=50%}  
+![](image/waste_water_1.png){width=70%} 
+
+<br />
+
+### Screencast
+
+<br />
+
+### Collaborators
+
+- Wendy Zhou (wz2630)
+- Jianing Liu (jl6325)
+- Ye Yuan (yy3295)
+- Beicheng Huang (bh2852)
+- Zhiqi Liu (al4327)
