@@ -10,3 +10,8 @@ output:
 ### I have a webpage!
 
 And I can put all kinds of stuff on it!
+
+
+
+<center>
+![](image/waste_water_1.png){width=50%}  
