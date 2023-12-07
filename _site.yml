@@ -9,7 +9,6 @@ navbar:
       href: data_visualization.html
     - text: "Interactive Map"
       href: map.html
-    - text: "Models"
     - text: "Regression Models"
       href: statistical_analysis.html
     - icon: fa-envelope fa-lg
