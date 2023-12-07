@@ -11,10 +11,12 @@ output:
 
 ### Background
 
-And I can put all kinds of stuff on it! 
+And I can put all kinds of stuff on it!
+
+<br />
 
 <center>
-![](image/waste_water_1.png){width=70%} 
+![](image/waste_water_1.png){width=65%} 
 
 <br />
 
@@ -31,3 +33,8 @@ And I can put all kinds of stuff on it!
 - Ye Yuan (yy3295)
 - Beicheng Huang (bh2852)
 - Zhiqi Liu (al4327)
+
+<br />
+
+<center>
+![](image/waste_water_2.png){width=95%} 
