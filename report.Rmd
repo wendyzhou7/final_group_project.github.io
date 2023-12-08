@@ -40,8 +40,8 @@ We used open data sources from 'NYC Open Data' and 'figshare':
 
 * HydroWaste Mapping data (figshare)
 
-For our purposes, we have loaded the following R packages:
 
+For our purposes, we have loaded the following R packages:
 * `tidyverse`
 * `ggridges`
 * `patchwork`
@@ -125,7 +125,8 @@ wwtp_df <-
 ```{r merge the waste water data file and mapping data file}
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
 ```
-
+<br />
+After cleaning, we merged the mapping and wastewater COVID-19 concentrations datasets to `nyc_wastewater`.
 ```{r choose the variables from the merged data file, message=FALSE}
 nyc_wastewater <-
   merge_df |>
@@ -208,7 +209,7 @@ overall_trend |>
   geom_smooth(size = 2, se = FALSE, alpha = .3) +
     labs(
       x = "Time", 
-      y = "Monthly average Covid-19 concentration in waste water in NY (N/L)") + 
+      y = "Average Covid-19 concentration (N/L)") + 
   theme(axis.line = element_line(color = "grey"), 
       panel.background = element_blank(), 
       legend.position = "none", 
@@ -340,11 +341,20 @@ box_plot_2022 <- rtqpcr |>
 box_plot_2021
 ```
 <br />
+
+### Interactive Map
+
 *Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.*
 
 <br />
 
+
 ## Additional analysis
+<br />
+
+### ANOVA
+
+### Logistic Regression
 
 *If you undertake formal statistical analyses, describe these in detail*
 Discussion: What were your findings? Are they what you expect? What insights into the data can you make?
