@@ -1,20 +1,189 @@
+---
+title: "Final Report"
+output:
+  html_document:
+    toc: true
+    code_folding: hide
+    toc_float: true
+---
 
-**Group Members:**
+## Motivation
 
-Wendy Zhou (wz2630), Jianing Liu (jl6325), Ye Yuan (yy3295), Beicheng Huang (bh2852), Zhiqi Liu (al4327)
+Provide an overview of the project goals and motivation.
+COVID-19 cases are constantly fluctuating and to better understand recent trends, we decided to analyze SARS-CoV-2 concentrations in wastewater data for the possibility of future public health interventions.
+
+## Related work
+
+Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+
+## Initial questions
+
+1. What trends can we see from the NYC wastewater COVID-19 concentrations?
+2. Is there a significant difference in NYC COVID-19 wastewater concentrations by season?
+3. Is there a significant difference in COVID-19 wastewater concentrations by NYC borough?
+4. Are seasons and NYC boroughs a significant predictor of COVID-19 wastewater concentrations?
+
+With our interest in the current COVID-19 climate in NYC, we first create data visualizations to see what trends are apparent. We saw a clear trend in high COVID-19 concentrations in the winter time and lower in the winter times. However, we knew we needed to test this hypothesis to make any conclusions. For the purposes of this project, takign locations into consideration would allow us to demonstrate our data analysis and visualizations skills.
+
+## Data 
+
+We used open data sources from 'NYC Open Data' and 'figshare':
+
+* SARS-CoV-2 concentrations measured in NYC Wastewater (NYC Open Data)
+
+* HydroWaste Mapping data (figshare)
+
+For our purposes, we have loaded the following R packages:
+
+* tidyverse
+* ggridges
+* patchwork
+* readxl
+* lubridate
+* leaflet
+* plotly
+* readr
+* knitr
+
+```{r}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(readxl)
+library(lubridate)
+library(leaflet)
+library(plotly)
+library(readr)
+library(knitr)
+```
+
+First, we imported the SARS-CoV-2 concentrations measured in NYC Wastewater and HydroWaste mapping data using the read_csv.
+```{r load the data files}
+map <-
+  read_csv("data/HydroWASTE_v10.csv")
+
+head(map) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
+  
+
+wwtp <-
+  read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
+
+head(wwtp) %>% 
+  knitr::kable(digits = 3) %>% 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
+  kableExtra::scroll_box(width = "100%", height = "300px")
+```
+
+There is a total of __ observations and __ variables in the mapping dataset, and a total of __ observations and __ variables in the COVID-19 concentrations dataset.
+
+We decided to analyze COVID-19 concentrations from the year 2021 and 2022 as these are recent years and would be most relevant to understand current the COVID cliamte. We are able to create visualizations with the 2023 observations, but we decided to leave it out of our final analysis because data was only taken from January to April of 2023. We focused only on COVID-19 concentrations that were collected using RT-qPCR because dPCR only had about 50 observations (not enough for thorough analysis).
+
+After, cleaning and merging our raw datasets, our final dataset s is called ____ with variables: 
+
+**Data dictionary:**
+
+* wrrf_name: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
+
+* wrrf_abbrev: abbreviation for wrrf_name
+
+* concentration: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
+
+* 
+
+## Exploratory analysis
+
+# Average Covid-19 Concentration of each waste water facility in 2021 in New York State
+```{r}
+spaghetti_plot_2021 <-
+  rtqpcr |>
+  filter(year == 2021) |>
+  group_by(month, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
+  geom_line(alpha = .5) +
+  geom_point(alpha = .5) +
+  labs(x = "Month", 
+       y = "Average Covid-19 Concentration of each waste water facility", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2021 in New York State") + 
+  theme(legend.position = "bottom",
+        legend.box.background = element_rect())
+
+spaghetti_plot_2021
+```
+
+# Average Covid-19 Concentration of each waste water facility in 2022 in New York State
+```{r}
+spaghetti_plot_2022 <-
+  rtqpcr |>
+  filter(year == 2022) |>
+  group_by(month, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
+  geom_line(alpha = .5) +
+  geom_point(alpha = .5) +
+  labs(x = "Month", 
+       y = "Average Covid-19 Concentration of each waste water facility", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State") + 
+  theme(legend.position = "bottom",
+        legend.box.background = element_rect())
+
+spaghetti_plot_2022
+```
+
+# Boxplot of Average Covid-19 Concentration by location in 2021
+```{r}
+box_plot_2021 <- rtqpcr %>%
+  filter(year == 2021) %>%
+  group_by(month, wrrf_name) %>%
+  summarise(avg_conc = mean(concentration)) %>%
+  plot_ly(
+    x = ~avg_conc,
+    y = ~wrrf_name,
+    type = "box",
+    color = ~wrrf_name,
+    colors = "viridis"
+  ) %>%
+  layout(
+    xaxis = list(title = "Mean concentration (N/L)"),
+    yaxis = list(title = "Area"),
+    showlegend = FALSE
+  )
+
+box_plot_2021
+
+```
+
+# Boxplot of Average Covid-19 Concentration by location in 2022
+```{r}
+box_plot_2022 <- rtqpcr %>%
+  filter(year == 2022) %>%
+  group_by(month, wrrf_name) %>%
+  summarise(avg_conc = mean(concentration)) %>%
+  plot_ly(
+    x = ~avg_conc,
+    y = ~wrrf_name,
+    type = "box",
+    color = ~wrrf_name,
+    colors = "viridis"
+  ) %>%
+  layout(
+    xaxis = list(title = "Mean concentration (N/L)"),
+    yaxis = list(title = "Area"),
+    showlegend = FALSE
+  )
+
+box_plot_2021
+```
+
+Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
 
-**Motivation:** Provide an overview of the project goals and motivation.
+## Additional analysis
 
-**Related work:** Anything that inspired you, such as a paper, a web site, or something we discussed in class.
-
-**Initial questions:** What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
-
-**Data:** Source, scraping method, cleaning, etc.
-
-**Exploratory analysis:** Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
-
-**Additional analysis:** If you undertake formal statistical analyses, describe these in detail
+If you undertake formal statistical analyses, describe these in detail
 Discussion: What were your findings? Are they what you expect? What insights into the data can you make?
 As this will be your only chance to describe your project in detail, make sure that your report is a standalone document that fully describes your process and results. We also expect you to write high-quality code that is understandable to an outside reader. Coding collaboratively and actively reviewing code within the team will help with this!
 
