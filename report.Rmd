@@ -43,7 +43,9 @@ With our interest in the current COVID-19 climate in NYC, we first create data v
 
 ## Data 
 <br />
+
 ### About the data
+
 We used open data sources from 'NYC Open Data' and 'figshare':
 
 * SARS-CoV-2 concentrations measured in NYC Wastewater (NYC Open Data)
@@ -184,7 +186,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 **Data dictionary:**
 
-<div class="well">
+
 * `lat_wttp`: latitude of water facility location
 
 * `lon_wttp`: longitude of water facility location
@@ -200,7 +202,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 * `concentration`: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
 
 * `technology`: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
-</div>
+
 
 <br />
 
