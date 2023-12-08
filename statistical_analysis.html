@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Jianing Liu" />
 
+<meta name="date" content="2023-12-04" />
 
-<title>Statistical Analysis</title>
+<title>Regression and Analysis</title>
 
 <script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,13 +31,11 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -222,73 +222,7 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
-<style type="text/css">
-.code-folding-btn { margin-bottom: 4px; }
-</style>
 
-
-
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
 
 
 
@@ -298,16 +232,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -358,27 +282,1144 @@ div.tocify {
 
 <div id="header">
 
-<div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
-<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-</ul>
-</div>
 
 
-
-<h1 class="title toc-ignore">Statistical Analysis</h1>
+<h1 class="title toc-ignore">Regression and Analysis</h1>
+<h4 class="author">Jianing Liu</h4>
+<h4 class="date">2023-12-04</h4>
 
 </div>
 
 
-
-
-
-
+<pre class="r"><code>map &lt;-
+  read_csv(&quot;data/HydroWASTE_v10.csv&quot;)</code></pre>
+<pre><code>## Rows: 58502 Columns: 25
+## ── Column specification ────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (5): WWTP_NAME, COUNTRY, CNTRY_ISO, STATUS, LEVEL
+## dbl (20): WASTE_ID, SOURCE, ORG_ID, LAT_WWTP, LON_WWTP, QUAL_LOC, LAT_OUT, L...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>head(map) %&gt;% 
+  knitr::kable(digits = 3) %&gt;% 
+  kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), font_size = 12) %&gt;% 
+  kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+WASTE_ID
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+SOURCE
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+ORG_ID
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+WWTP_NAME
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+COUNTRY
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+CNTRY_ISO
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+LAT_WWTP
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+LON_WWTP
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+QUAL_LOC
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+LAT_OUT
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+LON_OUT
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+STATUS
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+POP_SERVED
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+QUAL_POP
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+WASTE_DIS
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+QUAL_WASTE
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+LEVEL
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+QUAL_LEVEL
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+DF
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+HYRIV_ID
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+RIVER_DIS
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+COAST_10KM
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+COAST_50KM
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+DESIGN_CAP
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+QUAL_CAP
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140441
+</td>
+<td style="text-align:left;">
+Akmenes aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+56.247
+</td>
+<td style="text-align:right;">
+22.726
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+56.223
+</td>
+<td style="text-align:right;">
+22.627
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+1060
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+148.213
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+Advanced
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2421.974
+</td>
+<td style="text-align:right;">
+20228874
+</td>
+<td style="text-align:right;">
+4.153
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4600
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140443
+</td>
+<td style="text-align:left;">
+Alytaus m aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+54.432
+</td>
+<td style="text-align:right;">
+24.056
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+54.519
+</td>
+<td style="text-align:right;">
+24.098
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+87900
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+8797.904
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Advanced
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2534.527
+</td>
+<td style="text-align:right;">
+20261585
+</td>
+<td style="text-align:right;">
+257.983
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+220000
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140445
+</td>
+<td style="text-align:left;">
+Anyksciu aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+55.509
+</td>
+<td style="text-align:right;">
+25.073
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+55.452
+</td>
+<td style="text-align:right;">
+25.006
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+12400
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1959.285
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Advanced
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1367.809
+</td>
+<td style="text-align:right;">
+20243105
+</td>
+<td style="text-align:right;">
+30.995
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+33000
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140447
+</td>
+<td style="text-align:left;">
+Ariogalos aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+55.252
+</td>
+<td style="text-align:right;">
+23.484
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+55.210
+</td>
+<td style="text-align:right;">
+23.510
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+2500
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+578.482
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Secondary
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2061.969
+</td>
+<td style="text-align:right;">
+20247446
+</td>
+<td style="text-align:right;">
+13.799
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4357
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140449
+</td>
+<td style="text-align:left;">
+Baisogalos aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+55.644
+</td>
+<td style="text-align:right;">
+23.741
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+55.681
+</td>
+<td style="text-align:right;">
+23.835
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+1200
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+167.788
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+Secondary
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+209.549
+</td>
+<td style="text-align:right;">
+20239330
+</td>
+<td style="text-align:right;">
+0.405
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1490
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1140451
+</td>
+<td style="text-align:left;">
+Birstono Prienu aglomeracija
+</td>
+<td style="text-align:left;">
+Lithuania
+</td>
+<td style="text-align:left;">
+LTU
+</td>
+<td style="text-align:right;">
+54.623
+</td>
+<td style="text-align:right;">
+24.062
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+54.715
+</td>
+<td style="text-align:right;">
+24.094
+</td>
+<td style="text-align:left;">
+Not Reported
+</td>
+<td style="text-align:right;">
+12400
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2239.471
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Advanced
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+10366.240
+</td>
+<td style="text-align:right;">
+20256987
+</td>
+<td style="text-align:right;">
+268.665
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+19000
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
 </div>
+<pre class="r"><code>wwtp &lt;-
+  read_csv(&quot;data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv&quot;)</code></pre>
+<pre><code>## Rows: 4270 Columns: 9
+## ── Column specification ────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (6): Sample Date, Test date, WRRF Name, WRRF Abbreviation, Annotation, T...
+## num (3): Concentration SARS-CoV-2 gene target (N1 Copies/L), Per capita SARS...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>head(wwtp) %&gt;% 
+  knitr::kable(digits = 3) %&gt;% 
+  kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), font_size = 12) %&gt;% 
+  kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Sample Date
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Test date
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+WRRF Name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+WRRF Abbreviation
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Concentration SARS-CoV-2 gene target (N1 Copies/L)
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Per capita SARS-CoV-2 load (N1 copies per day per population)
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Annotation
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Population Served, estimated
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Technology
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+26th Ward
+</td>
+<td style="text-align:left;">
+26W
+</td>
+<td style="text-align:right;">
+389
+</td>
+<td style="text-align:right;">
+263535.6
+</td>
+<td style="text-align:left;">
+Concentration below Method Limit of Quantification (above Method Limit
+of Detection)
+</td>
+<td style="text-align:right;">
+290608
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+Bowery Bay
+</td>
+<td style="text-align:left;">
+BB
+</td>
+<td style="text-align:right;">
+1204
+</td>
+<td style="text-align:right;">
+443632.9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+924695
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+Coney Island
+</td>
+<td style="text-align:left;">
+CI
+</td>
+<td style="text-align:right;">
+304
+</td>
+<td style="text-align:right;">
+168551.6
+</td>
+<td style="text-align:left;">
+Concentration below Method Limit of Quantification (above Method Limit
+of Detection)
+</td>
+<td style="text-align:right;">
+682342
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+Hunts Point
+</td>
+<td style="text-align:left;">
+HP
+</td>
+<td style="text-align:right;">
+940
+</td>
+<td style="text-align:right;">
+574446.6
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+755948
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+Jamaica Bay
+</td>
+<td style="text-align:left;">
+JA
+</td>
+<td style="text-align:right;">
+632
+</td>
+<td style="text-align:right;">
+233077.7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+748737
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+08/31/2020
+</td>
+<td style="text-align:left;">
+09/01/2020
+</td>
+<td style="text-align:left;">
+Newtown Creek
+</td>
+<td style="text-align:left;">
+NC
+</td>
+<td style="text-align:right;">
+197
+</td>
+<td style="text-align:right;">
+122396.8
+</td>
+<td style="text-align:left;">
+Concentration below Method Limit of Quantification (above Method Limit
+of Detection)
+</td>
+<td style="text-align:right;">
+1156473
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+</tbody>
+</table>
 </div>
+<pre class="r"><code>map_df &lt;-
+  map |&gt;
+  janitor::clean_names() |&gt;
+  select(waste_id, wwtp_name, lat_wwtp, lon_wwtp) |&gt;
+  mutate(wrrf_abbreviation = recode( wwtp_name,
+    &quot;New York C   Rockaway WPCP&quot; = &quot;RK&quot;,
+    &quot;New York C   Red Hook WPCP&quot; = &quot;RH&quot;,
+    &quot;New York C   Port Richmond WPCP&quot; = &quot;PR&quot;,
+    &quot;New York C   Oakwood Beach WPCP&quot; = &quot;OB&quot;,
+    &quot;New York C   26th Ward WPCP&quot; = &quot;26W&quot;,
+    &quot;New York C   Tallman Island WPCP&quot; = &quot;TI&quot;,
+    &quot;New York C   North River WPCP&quot; = &quot;NR&quot;,
+    &quot;New York C   Coney Island WPCP&quot; = &quot;CI&quot;,
+    &quot;New York C   Jamaica WPCP&quot; = &quot;JA&quot;,
+    &quot;New York C   Hunts Point WPCP&quot; = &quot;HP&quot;,
+    &quot;New York C   Owls Head WPCP&quot; = &quot;OH&quot;,
+    &quot;New York C   Bowery Bay WPCP&quot; = &quot;BB&quot;,
+    &quot;New York C   Newtown Creek WPCP&quot; = &quot;NC&quot;,
+    &quot;New York C   Wards Island WPCP&quot; = &quot;WI&quot;,
+  ))</code></pre>
+<pre class="r"><code>wwtp_df &lt;-
+  wwtp |&gt;
+  janitor:: clean_names()</code></pre>
+<pre class="r"><code>merge_df &lt;- inner_join(map_df, wwtp_df, by = &quot;wrrf_abbreviation&quot;)</code></pre>
+<pre class="r"><code>nyc_wastewater &lt;-
+  merge_df |&gt;
+  rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |&gt;
+  drop_na(concentration) |&gt;
+  separate(sample_date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), convert = TRUE) %&gt;% 
+   mutate(
+     year = as.character(year),
+     month = factor(month, levels = 1:12),
+     month = recode(month,
+                        &quot;1&quot; = &quot;January&quot;,
+                        &quot;2&quot; = &quot;February&quot;,
+                        &quot;3&quot; = &quot;March&quot;,
+                        &quot;4&quot; = &quot;April&quot;,
+                        &quot;5&quot; = &quot;May&quot;,
+                        &quot;6&quot; = &quot;June&quot;,
+                        &quot;7&quot; = &quot;July&quot;,
+                        &quot;8&quot; = &quot;August&quot;,
+                        &quot;9&quot; = &quot;September&quot;,
+                        &quot;10&quot; = &quot;October&quot;,
+                        &quot;11&quot; = &quot;November&quot;,
+                        &quot;12&quot; = &quot;December&quot;)) |&gt;
+  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)</code></pre>
+<p>Regression part</p>
+<p>Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4,
+Manhattan is assigned as reference</p>
+<pre class="r"><code>borough_wastewater &lt;-
+  nyc_wastewater |&gt;
+  filter(year %in% c(2021, 2022), technology == &quot;RT-qPCR&quot;) |&gt;
+  group_by(month, year, wrrf_name) |&gt;
+  summarise(avg_conc = mean(concentration)) |&gt;
+  mutate(
+    boroughs = case_match(wrrf_name,
+                         &quot;26th Ward&quot; ~ &quot;Brooklyn&quot;,
+                         &quot;Bowery Bay&quot; ~ &quot;Manhattan&quot;,
+                         &quot;Coney Island&quot; ~ &quot;Brooklyn&quot;,
+                         &quot;Hunts Point&quot; ~ &quot;Bronx&quot;,
+                         &quot;Jamaica Bay&quot; ~ &quot;Queens&quot;,
+                         &quot;Newtown Creek&quot; ~ &quot;Queens&quot;,
+                         &quot;North River&quot; ~ &quot;Manhattan&quot;,
+                         &quot;Oakwood Beach&quot; ~ &quot;Staten Island&quot;,
+                         &quot;Owls Head&quot; ~ &quot;Brooklyn&quot;,
+                         &quot;Port Richmond&quot; ~ &quot;Staten Island&quot;,
+                         &quot;Red Hook&quot; ~ &quot;Brooklyn&quot;,
+                         &quot;Rockaway&quot; ~ &quot;Queens&quot;,
+                         &quot;Tallman Island&quot; ~ &quot;Queens&quot;,
+                         &quot;Wards Island&quot; ~ &quot;Manhattan&quot;
+                         )
+  ) |&gt;
+  mutate (borough_id = as.factor(case_match(
+      boroughs,
+      &quot;Manhattan&quot; ~ 0,
+      &quot;Brooklyn&quot; ~ 1,
+      &quot;Bronx&quot; ~ 2,
+      &quot;Queens&quot; ~ 3,
+      &quot;Staten Island&quot; ~ 4
+    ))
+    )</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;month&#39;,
+## &#39;year&#39;. You can override using the `.groups`
+## argument.</code></pre>
+<p>Creating dataset for regression analysis, assigned months to seasons
+and use summer as reference.</p>
+<pre class="r"><code>data_reg =
+  borough_wastewater %&gt;% 
+  mutate (season = case_match(month,
+                        &quot;January&quot; ~ &quot;Winter&quot;,
+                        &quot;February&quot; ~ &quot;Winter&quot;,
+                        &quot;March&quot; ~ &quot;Spring&quot;,
+                        &quot;April&quot; ~ &quot;Spring&quot;,
+                        &quot;May&quot; ~ &quot;Spring&quot;,
+                        &quot;June&quot; ~ &quot;Summer&quot;,
+                        &quot;July&quot; ~ &quot;Summer&quot;,
+                        &quot;August&quot; ~ &quot;Summer&quot;,
+                        &quot;September&quot; ~ &quot;Autumn&quot;,
+                        &quot;October&quot; ~ &quot;Autumn&quot;,
+                        &quot;November&quot; ~ &quot;Autumn&quot;,
+                        &quot;December&quot; ~ &quot;Winter&quot;)) %&gt;% 
+  mutate (season_id = as.factor(case_match(
+      season,
+      &quot;Summer&quot; ~ 0,
+      &quot;Autumn&quot; ~ 1,
+      &quot;Winter&quot; ~ 2,
+      &quot;Spring&quot; ~ 3
+    ))
+    )</code></pre>
+<pre class="r"><code>model_anova_borough &lt;- aov(avg_conc ~ borough_id, data = borough_wastewater)
+summary(model_anova_borough)</code></pre>
+<pre><code>##              Df    Sum Sq   Mean Sq F value Pr(&gt;F)
+## borough_id    4 2.029e+08  50718771   0.469  0.759
+## Residuals   331 3.581e+10 108189467</code></pre>
+<pre class="r"><code>model_anova_season &lt;- aov(avg_conc ~ season_id, data = data_reg)
+
+summary(model_anova_season)</code></pre>
+<pre><code>##              Df    Sum Sq   Mean Sq F value Pr(&gt;F)    
+## season_id     3 8.192e+09 2.731e+09   32.58 &lt;2e-16 ***
+## Residuals   332 2.782e+10 8.380e+07                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>data_fit_logistic =
+  glm(avg_conc ~ borough_id + relevel(season_id,ref = &quot;0&quot;), data = data_reg)
+
+summary(data_fit_logistic)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = avg_conc ~ borough_id + relevel(season_id, ref = &quot;0&quot;), 
+##     data = data_reg)
+## 
+## Coefficients:
+##                                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                     10645.4     1386.1   7.680 1.85e-13 ***
+## borough_id1                       796.0     1430.6   0.556    0.578    
+## borough_id2                     -2401.9     2162.9  -1.110    0.268    
+## borough_id3                       285.8     1430.6   0.200    0.842    
+## borough_id4                      -117.0     1709.9  -0.068    0.946    
+## relevel(season_id, ref = &quot;0&quot;)2  10302.5     1415.9   7.276 2.55e-12 ***
+## relevel(season_id, ref = &quot;0&quot;)3  -2097.6     1415.9  -1.481    0.139    
+## relevel(season_id, ref = &quot;0&quot;)1   -808.8     1415.9  -0.571    0.568    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for gaussian family taken to be 84204245)
+## 
+##     Null deviance: 3.6014e+10  on 335  degrees of freedom
+## Residual deviance: 2.7619e+10  on 328  degrees of freedom
+## AIC: 7095
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+<pre class="r"><code>data_fit_logistic |&gt;
+  broom::tidy() |&gt; 
+  knitr::kable(digits = 3)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+std.error
+</th>
+<th style="text-align:right;">
+statistic
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+10645.353
+</td>
+<td style="text-align:right;">
+1386.119
+</td>
+<td style="text-align:right;">
+7.680
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+borough_id1
+</td>
+<td style="text-align:right;">
+796.003
+</td>
+<td style="text-align:right;">
+1430.605
+</td>
+<td style="text-align:right;">
+0.556
+</td>
+<td style="text-align:right;">
+0.578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+borough_id2
+</td>
+<td style="text-align:right;">
+-2401.857
+</td>
+<td style="text-align:right;">
+2162.872
+</td>
+<td style="text-align:right;">
+-1.110
+</td>
+<td style="text-align:right;">
+0.268
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+borough_id3
+</td>
+<td style="text-align:right;">
+285.797
+</td>
+<td style="text-align:right;">
+1430.605
+</td>
+<td style="text-align:right;">
+0.200
+</td>
+<td style="text-align:right;">
+0.842
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+borough_id4
+</td>
+<td style="text-align:right;">
+-116.958
+</td>
+<td style="text-align:right;">
+1709.900
+</td>
+<td style="text-align:right;">
+-0.068
+</td>
+<td style="text-align:right;">
+0.946
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+relevel(season_id, ref = "0")2
+</td>
+<td style="text-align:right;">
+10302.511
+</td>
+<td style="text-align:right;">
+1415.932
+</td>
+<td style="text-align:right;">
+7.276
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+relevel(season_id, ref = "0")3
+</td>
+<td style="text-align:right;">
+-2097.628
+</td>
+<td style="text-align:right;">
+1415.932
+</td>
+<td style="text-align:right;">
+-1.481
+</td>
+<td style="text-align:right;">
+0.139
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+relevel(season_id, ref = "0")1
+</td>
+<td style="text-align:right;">
+-808.811
+</td>
+<td style="text-align:right;">
+1415.932
+</td>
+<td style="text-align:right;">
+-0.571
+</td>
+<td style="text-align:right;">
+0.568
+</td>
+</tr>
+</tbody>
+</table>
+<p>We created borough_id as a categorical variable by grouping
+wastewater plants according to their respective five boroughs, including
+Manhattan, Brooklyn, Bronx, Queens, Staten Island. We set Manhattan as
+reference. We then created season_id as a categorical variable by
+grouping month according to four different seasons, including summer,
+autumn, winter, and spring. We set summer as the reference.</p>
+<p>First, we run ANOVA test for borough_id and season_id to see if there
+is a significant association between the average of wastewater covid-19
+concentrations with different boroughs locations. Since p-value is
+0.469, which is greater than alpha = 0.05, there is no sufficient
+evidence to support a relationship between borough_id and the average
+wastewater covid-19 concentration. Then we applied the same method to
+season_id. The p-value is 2e-16, which is smaller than alpha = 0.05.
+Therefore, there is sufficient evidence to support a relationship
+between season_id and the average wastewater covid-19 concentration. In
+addition, we tried to fit a regression model by using borough_id and
+season_id as explanatory variables and the average wastewater covid-19
+concentration as response variable. Almost all the p-values for each
+categorical variable are greater than alpha = 0.05, except for season_id
+= 2, indicating winter. Therefore, we can conclude that there could be a
+trend between the average concentration of wastewater covid-19 cases
+with winter season.</p>
+
+
+
 
 </div>
 
@@ -410,41 +1451,7 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
