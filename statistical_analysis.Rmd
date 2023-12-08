@@ -189,6 +189,10 @@ data_fit_logistic |>
   knitr::kable(digits = 3)
 ```
 
+<br />
+
 We created borough_id as a categorical variable by grouping wastewater plants according to their respective five boroughs, including Manhattan, Brooklyn, Bronx, Queens, Staten Island. We set Manhattan as reference. We then created season_id as a categorical variable by grouping month according to four different seasons, including summer, autumn, winter, and spring. We set summer as the reference.
+
+<br />
 
 First, we run ANOVA test for borough_id and season_id to see if there is a significant association between the average of wastewater covid-19 concentrations with different boroughs locations. Since p-value is 0.469, which is greater than alpha = 0.05, there is no sufficient evidence to support a relationship between borough_id and the average wastewater covid-19 concentration. Then we applied the same method to season_id. The p-value is 2e-16, which is smaller than alpha = 0.05. Therefore, there is sufficient evidence to support a relationship between season_id and the average wastewater covid-19 concentration. In addition, we tried to fit a regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.
