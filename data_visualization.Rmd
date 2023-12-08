@@ -38,6 +38,13 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
+Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 waste water facilities located in the New York state. However, the visualization process is not easily achieved as the NYC waste water dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of wastewater facilities within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for waste water facilities in many countries, containing USA. 
+
+- How to create a dataset which contains both SARS-CoV-2 data and geographic location data?
+- what is the overall SARS-CoV-2 distribution inside waste water across NYC over the years of the pandemic?
+- How does the SARS-CoV-2 concentration vary among the 14 waste water facilities in NYC over the years of the pandemic?
+- How does the SARS-CoV-2 concentration distribute within each of the waste water facility over the years of the pandemic?
+
 
 ```{r load the data files}
 map <-
