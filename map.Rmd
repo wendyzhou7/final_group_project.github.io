@@ -1,10 +1,144 @@
 ---
 title: "Map"
-output:
-  html_document:
-    toc: true
-    code_folding: hide
-    toc_float: true
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
 ---
 
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(patchwork)
+library(readxl)
+library(lubridate)
+library(leaflet)
+library(plotly)
+library(readr)
+library(knitr)
+library(modelr)
 
+knitr::opts_chunk$set(
+    echo = TRUE,
+    warning = FALSE,
+    message = FALSE,
+    fig.width = 16, 
+  fig.height = 12,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+
+```{r load the data files}
+map <-
+  read_csv("data/HydroWASTE_v10.csv")
+  
+
+wwtp <-
+  read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
+```
+
+
+```{r clean the mapping data file and rename plant names}
+map_df <-
+  map |>
+  janitor::clean_names() |>
+  select(waste_id, wwtp_name, lat_wwtp, lon_wwtp) |>
+  mutate(wrrf_abbreviation = recode( wwtp_name,
+    "New York C   Rockaway WPCP" = "RK",
+    "New York C   Red Hook WPCP" = "RH",
+    "New York C   Port Richmond WPCP" = "PR",
+    "New York C   Oakwood Beach WPCP" = "OB",
+    "New York C   26th Ward WPCP" = "26W",
+    "New York C   Tallman Island WPCP" = "TI",
+    "New York C   North River WPCP" = "NR",
+    "New York C   Coney Island WPCP" = "CI",
+    "New York C   Jamaica WPCP" = "JA",
+    "New York C   Hunts Point WPCP" = "HP",
+    "New York C   Owls Head WPCP" = "OH",
+    "New York C   Bowery Bay WPCP" = "BB",
+    "New York C   Newtown Creek WPCP" = "NC",
+    "New York C   Wards Island WPCP" = "WI",
+  ))
+```
+
+```{r clean the waste water data file}
+wwtp_df <-
+  wwtp |>
+  janitor:: clean_names()
+```
+
+```{r merge the waste water data file and mapping data file}
+merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
+```
+
+```{r choose the variables from the merged data file}
+nyc_wastewater <-
+  merge_df |>
+  rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
+  drop_na(concentration) |>
+  separate(sample_date, into = c("month", "day", "year"), convert = TRUE) %>% 
+   mutate(
+     year = as.character(year),
+     month = factor(month, levels = 1:12),
+     month = recode(month,
+                        "1" = "January",
+                        "2" = "February",
+                        "3" = "March",
+                        "4" = "April",
+                        "5" = "May",
+                        "6" = "June",
+                        "7" = "July",
+                        "8" = "August",
+                        "9" = "September",
+                        "10" = "October",
+                        "11" = "November",
+                        "12" = "December")) |>
+  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
+```
+
+-----------------------------------------------------------------------
+
+New York City 14 Waste Water Plant Stations Map
+```{r}
+wttp_map <-
+  nyc_wastewater %>% 
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") %>% 
+  group_by(wrrf_name) %>%
+  summarise(avg_conc_area = mean(concentration))
+
+nyc_wastewater %>% 
+  group_by(wrrf_name)
+            
+map_df <- left_join(nyc_wastewater, wttp_map, by = "wrrf_name")
+```
+
+```{r}
+map <-
+  map_df %>% 
+  leaflet() |>
+  addTiles() |>
+  addCircleMarkers(
+             lng = ~lon_wwtp,
+             lat = ~lat_wwtp,
+             radius = 7,
+             stroke = TRUE,
+             fillOpacity = 0.75,
+             color = "skyblue",
+             popup = ~paste(sep = "<br/>",
+                            "<b>", wrrf_name,
+                            "</b><br>Mean Concentration:", avg_conc_area, "(N1 Copies/L)")) %>% 
+  addProviderTiles(providers$CartoDB.Positron)
+
+map
+```
