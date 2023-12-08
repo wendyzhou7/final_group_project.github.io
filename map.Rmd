@@ -1,9 +1,10 @@
 ---
 title: "Map"
-output: 
-  flexdashboard::flex_dashboard:
-    orientation: columns
-    vertical_layout: fill
+output:
+  html_document:
+    toc: true
+    code_folding: hide
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
