@@ -22,10 +22,7 @@ library(broom)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
-	message = FALSE,
-	fig.width = 16, 
-  fig.height = 12,
-  out.width = "90%"
+	message = FALSE
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -162,6 +159,85 @@ data_reg =
 
 <br />
 
+```{r}
+borough_wastewater_box <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate(
+    boroughs = case_match(wrrf_name,
+                         "26th Ward" ~ "Brooklyn",
+                         "Bowery Bay" ~ "Manhattan",
+                         "Coney Island" ~ "Brooklyn",
+                         "Hunts Point" ~ "Bronx",
+                         "Jamaica Bay" ~ "Queens",
+                         "Newtown Creek" ~ "Queens",
+                         "North River" ~ "Manhattan",
+                         "Oakwood Beach" ~ "Staten Island",
+                         "Owls Head" ~ "Brooklyn",
+                         "Port Richmond" ~ "Staten Island",
+                         "Red Hook" ~ "Brooklyn",
+                         "Rockaway" ~ "Queens",
+                         "Tallman Island" ~ "Queens",
+                         "Wards Island" ~ "Manhattan"
+                         )
+  ) %>% 
+  plot_ly(
+    y = ~boroughs,
+    x = ~avg_conc,
+    type = "box",
+    color = ~boroughs,
+    colors = "viridis"
+  ) %>%
+  layout(
+    yaxis = list(title = "Boroughs"),
+    xaxis = list(title = "Average Covid-19 Wastewater Concentration"),
+    showlegend = FALSE
+  )
+
+borough_wastewater_box
+```
+
+<br />
+
+```{r}
+season_wastewater_box <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate (season = case_match(month,
+                        "January" ~ "Winter",
+                        "February" ~ "Winter",
+                        "March" ~ "Spring",
+                        "April" ~ "Spring",
+                        "May" ~ "Spring",
+                        "June" ~ "Summer",
+                        "July" ~ "Summer",
+                        "August" ~ "Summer",
+                        "September" ~ "Autumn",
+                        "October" ~ "Autumn",
+                        "November" ~ "Autumn",
+                        "December" ~ "Winter")) %>% 
+  plot_ly(
+    y = ~season,
+    x = ~avg_conc,
+    type = "box",
+    color = ~season,
+    colors = "viridis"
+  ) %>%
+  layout(
+    yaxis = list(title = "Season"),
+    xaxis = list(title = "Average Covid-19 Wastewater Concentration"),
+    showlegend = FALSE
+  )
+
+season_wastewater_box
+```
+
+<br />
+
 ### Anova for boroughs
 
 ```{r Anova for boroughs}
@@ -178,7 +254,6 @@ summary(model_anova_borough)
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
 summary(model_anova_season)
-
 ```
 
 <br />
