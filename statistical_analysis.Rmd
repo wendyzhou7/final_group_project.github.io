@@ -39,7 +39,6 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-
 ```{r load the data files}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
@@ -98,9 +97,10 @@ nyc_wastewater <-
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)
 ```
 
-Regression part
+<br />
 
 Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4, Manhattan is assigned as reference
+
 ```{r making boroughs as categorical variables}
 borough_wastewater <-
   nyc_wastewater |>
@@ -135,10 +135,6 @@ borough_wastewater <-
     ))
     )
   
-```
-
-Creating dataset for regression analysis, assigned months to seasons and use summer as reference.
-```{r}
 data_reg =
   borough_wastewater %>% 
   mutate (season = case_match(month,
@@ -164,12 +160,20 @@ data_reg =
     )
 ```
 
+<br />
+
+### Anova for boroughs
 
 ```{r Anova for boroughs}
 model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
 summary(model_anova_borough)
 
 ```
+
+<br />
+
+### Anova for seasons
+
 ```{r Anova for seasons}
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
@@ -177,16 +181,15 @@ summary(model_anova_season)
 
 ```
 
+<br />
+
+### Logistic Regression
 
 ```{r}
 data_fit_logistic =
   glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg)
 
 summary(data_fit_logistic)
-
-data_fit_logistic |>
-  broom::tidy() |> 
-  knitr::kable(digits = 3)
 ```
 
 <br />
@@ -195,4 +198,8 @@ We created borough_id as a categorical variable by grouping wastewater plants ac
 
 <br />
 
-First, we run ANOVA test for borough_id and season_id to see if there is a significant association between the average of wastewater covid-19 concentrations with different boroughs locations. Since p-value is 0.469, which is greater than alpha = 0.05, there is no sufficient evidence to support a relationship between borough_id and the average wastewater covid-19 concentration. Then we applied the same method to season_id. The p-value is 2e-16, which is smaller than alpha = 0.05. Therefore, there is sufficient evidence to support a relationship between season_id and the average wastewater covid-19 concentration. In addition, we tried to fit a regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.
+First, we run ANOVA test for borough_id and season_id to see if there is a significant association between the average of wastewater covid-19 concentrations with different boroughs locations. Since p-value is 0.469, which is greater than alpha = 0.05, there is no sufficient evidence to support a relationship between borough_id and the average wastewater covid-19 concentration. Then we applied the same method to season_id. The p-value is 2e-16, which is smaller than alpha = 0.05. Therefore, there is sufficient evidence to support a relationship between season_id and the average wastewater covid-19 concentration. 
+
+<br />
+
+In addition, we tried to fit a regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.

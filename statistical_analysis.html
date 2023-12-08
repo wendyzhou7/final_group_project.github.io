@@ -428,7 +428,7 @@ nyc_wastewater &lt;-
                         &quot;11&quot; = &quot;November&quot;,
                         &quot;12&quot; = &quot;December&quot;)) |&gt;
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)</code></pre>
-<p>Regression part</p>
+<p><br /></p>
 <p>Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4,
 Manhattan is assigned as reference</p>
 <pre class="r"><code>borough_wastewater &lt;-
@@ -462,10 +462,9 @@ Manhattan is assigned as reference</p>
       &quot;Queens&quot; ~ 3,
       &quot;Staten Island&quot; ~ 4
     ))
-    )</code></pre>
-<p>Creating dataset for regression analysis, assigned months to seasons
-and use summer as reference.</p>
-<pre class="r"><code>data_reg =
+    )
+  
+data_reg =
   borough_wastewater %&gt;% 
   mutate (season = case_match(month,
                         &quot;January&quot; ~ &quot;Winter&quot;,
@@ -488,11 +487,18 @@ and use summer as reference.</p>
       &quot;Spring&quot; ~ 3
     ))
     )</code></pre>
+<p><br /></p>
+<div id="anova-for-boroughs" class="section level3">
+<h3>Anova for boroughs</h3>
 <pre class="r"><code>model_anova_borough &lt;- aov(avg_conc ~ borough_id, data = borough_wastewater)
 summary(model_anova_borough)</code></pre>
 <pre><code>##              Df    Sum Sq   Mean Sq F value Pr(&gt;F)
 ## borough_id    4 2.029e+08  50718771   0.469  0.759
 ## Residuals   331 3.581e+10 108189467</code></pre>
+<p><br /></p>
+</div>
+<div id="anova-for-seasons" class="section level3">
+<h3>Anova for seasons</h3>
 <pre class="r"><code>model_anova_season &lt;- aov(avg_conc ~ season_id, data = data_reg)
 
 summary(model_anova_season)</code></pre>
@@ -501,6 +507,10 @@ summary(model_anova_season)</code></pre>
 ## Residuals   332 2.782e+10 8.380e+07                   
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><br /></p>
+</div>
+<div id="logistic-regression" class="section level3">
+<h3>Logistic Regression</h3>
 <pre class="r"><code>data_fit_logistic =
   glm(avg_conc ~ borough_id + relevel(season_id,ref = &quot;0&quot;), data = data_reg)
 
@@ -530,168 +540,6 @@ summary(data_fit_logistic)</code></pre>
 ## AIC: 7095
 ## 
 ## Number of Fisher Scoring iterations: 2</code></pre>
-<pre class="r"><code>data_fit_logistic |&gt;
-  broom::tidy() |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-term
-</th>
-<th style="text-align:right;">
-estimate
-</th>
-<th style="text-align:right;">
-std.error
-</th>
-<th style="text-align:right;">
-statistic
-</th>
-<th style="text-align:right;">
-p.value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(Intercept)
-</td>
-<td style="text-align:right;">
-10645.353
-</td>
-<td style="text-align:right;">
-1386.119
-</td>
-<td style="text-align:right;">
-7.680
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-borough_id1
-</td>
-<td style="text-align:right;">
-796.003
-</td>
-<td style="text-align:right;">
-1430.605
-</td>
-<td style="text-align:right;">
-0.556
-</td>
-<td style="text-align:right;">
-0.578
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-borough_id2
-</td>
-<td style="text-align:right;">
--2401.857
-</td>
-<td style="text-align:right;">
-2162.872
-</td>
-<td style="text-align:right;">
--1.110
-</td>
-<td style="text-align:right;">
-0.268
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-borough_id3
-</td>
-<td style="text-align:right;">
-285.797
-</td>
-<td style="text-align:right;">
-1430.605
-</td>
-<td style="text-align:right;">
-0.200
-</td>
-<td style="text-align:right;">
-0.842
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-borough_id4
-</td>
-<td style="text-align:right;">
--116.958
-</td>
-<td style="text-align:right;">
-1709.900
-</td>
-<td style="text-align:right;">
--0.068
-</td>
-<td style="text-align:right;">
-0.946
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-relevel(season_id, ref = "0")2
-</td>
-<td style="text-align:right;">
-10302.511
-</td>
-<td style="text-align:right;">
-1415.932
-</td>
-<td style="text-align:right;">
-7.276
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-relevel(season_id, ref = "0")3
-</td>
-<td style="text-align:right;">
--2097.628
-</td>
-<td style="text-align:right;">
-1415.932
-</td>
-<td style="text-align:right;">
--1.481
-</td>
-<td style="text-align:right;">
-0.139
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-relevel(season_id, ref = "0")1
-</td>
-<td style="text-align:right;">
--808.811
-</td>
-<td style="text-align:right;">
-1415.932
-</td>
-<td style="text-align:right;">
--0.571
-</td>
-<td style="text-align:right;">
-0.568
-</td>
-</tr>
-</tbody>
-</table>
 <p><br /></p>
 <p>We created borough_id as a categorical variable by grouping
 wastewater plants according to their respective five boroughs, including
@@ -708,14 +556,16 @@ evidence to support a relationship between borough_id and the average
 wastewater covid-19 concentration. Then we applied the same method to
 season_id. The p-value is 2e-16, which is smaller than alpha = 0.05.
 Therefore, there is sufficient evidence to support a relationship
-between season_id and the average wastewater covid-19 concentration. In
-addition, we tried to fit a regression model by using borough_id and
-season_id as explanatory variables and the average wastewater covid-19
-concentration as response variable. Almost all the p-values for each
-categorical variable are greater than alpha = 0.05, except for season_id
-= 2, indicating winter. Therefore, we can conclude that there could be a
-trend between the average concentration of wastewater covid-19 cases
-with winter season.</p>
+between season_id and the average wastewater covid-19 concentration.</p>
+<p><br /></p>
+<p>In addition, we tried to fit a regression model by using borough_id
+and season_id as explanatory variables and the average wastewater
+covid-19 concentration as response variable. Almost all the p-values for
+each categorical variable are greater than alpha = 0.05, except for
+season_id = 2, indicating winter. Therefore, we can conclude that there
+could be a trend between the average concentration of wastewater
+covid-19 cases with winter season.</p>
+</div>
 
 
 
