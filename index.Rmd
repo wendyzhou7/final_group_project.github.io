@@ -19,11 +19,15 @@ output:
 
 ### Collaborators
 
-* Beicheng Huang (bh2852)
-* Jianing Liu (jl6325)
-* Wendy Zhou (wz2630)
-* Ye Yuan (yy3295)
-* Zhiqi Liu (al4327)
+Beicheng Huang (bh2852)
+
+Jianing Liu (jl6325)
+
+Wendy Zhou (wz2630)
+
+Ye Yuan (yy3295)
+
+Zhiqi Liu (al4327)
 
 <br />
 
