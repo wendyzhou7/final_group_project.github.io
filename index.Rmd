@@ -14,19 +14,16 @@ output:
 
 <br />
 
-### Screencast
-
-And I can put all kinds of stuff on it!
 
 <br />
 
 ### Collaborators
 
-- Wendy Zhou (wz2630)
-- Jianing Liu (jl6325)
-- Ye Yuan (yy3295)
-- Beicheng Huang (bh2852)
-- Zhiqi Liu (al4327)
+* Beicheng Huang (bh2852)
+* Jianing Liu (jl6325)
+* Wendy Zhou (wz2630)
+* Ye Yuan (yy3295)
+* Zhiqi Liu (al4327)
 
 <br />
 
