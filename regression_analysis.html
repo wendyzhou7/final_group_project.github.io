@@ -15,7 +15,7 @@
 
 <title>Regression and Analysis</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -294,7 +294,7 @@ $(document).ready(function () {
 <pre class="r"><code>map &lt;-
   read_csv(&quot;data/HydroWASTE_v10.csv&quot;)</code></pre>
 <pre><code>## Rows: 58502 Columns: 25
-## ── Column specification ────────────────────────
+## ── Column specification ─────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr  (5): WWTP_NAME, COUNTRY, CNTRY_ISO, STATUS, LEVEL
 ## dbl (20): WASTE_ID, SOURCE, ORG_ID, LAT_WWTP, LON_WWTP, QUAL_LOC, LAT_OUT, L...
@@ -856,7 +856,7 @@ Advanced
 <pre class="r"><code>wwtp &lt;-
   read_csv(&quot;data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv&quot;)</code></pre>
 <pre><code>## Rows: 4270 Columns: 9
-## ── Column specification ────────────────────────
+## ── Column specification ─────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (6): Sample Date, Test date, WRRF Name, WRRF Abbreviation, Annotation, T...
 ## num (3): Concentration SARS-CoV-2 gene target (N1 Copies/L), Per capita SARS...
@@ -1162,9 +1162,8 @@ assigned 0-4, Manhattan is assigned as reference</p>
       &quot;Staten Island&quot; ~ 4
     ))
     )</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;month&#39;,
-## &#39;year&#39;. You can override using the `.groups`
-## argument.</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;year&#39;. You can
+## override using the `.groups` argument.</code></pre>
 <p>Creating dataset for regression analysis, assigned months to seasons
 and use summer as reference.</p>
 <pre class="r"><code>data_reg =

@@ -59,6 +59,8 @@ library(knitr)
 
 First, we imported the SARS-CoV-2 concentrations measured in NYC Wastewater and HydroWaste mapping data using the read_csv.
 
+Here is a glimpse of the types of variables we have:
+
 ```{r message=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
@@ -77,29 +79,91 @@ head(wwtp) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-<br />
 
-There is a total of __ observations and __ variables in the mapping dataset, and a total of __ observations and __ variables in the COVID-19 concentrations dataset.
+```{r clean the mapping data file and rename plant names}
+map_df <-
+  map |>
+  janitor::clean_names() |>
+  select(waste_id, wwtp_name, lat_wwtp, lon_wwtp) |>
+  mutate(wrrf_abbreviation = recode( wwtp_name,
+    "New York C   Rockaway WPCP" = "RK",
+    "New York C   Red Hook WPCP" = "RH",
+    "New York C   Port Richmond WPCP" = "PR",
+    "New York C   Oakwood Beach WPCP" = "OB",
+    "New York C   26th Ward WPCP" = "26W",
+    "New York C   Tallman Island WPCP" = "TI",
+    "New York C   North River WPCP" = "NR",
+    "New York C   Coney Island WPCP" = "CI",
+    "New York C   Jamaica WPCP" = "JA",
+    "New York C   Hunts Point WPCP" = "HP",
+    "New York C   Owls Head WPCP" = "OH",
+    "New York C   Bowery Bay WPCP" = "BB",
+    "New York C   Newtown Creek WPCP" = "NC",
+    "New York C   Wards Island WPCP" = "WI",
+  ))
+
+# Raw mapping dataset has 58503 observations and 25 variables. For our purposes, we only kept 5 variables including waste_id, wttp_name, lat_wttp, long_wttp, and wrrf_abbreviation
+```
+<br />
 
 We decided to analyze COVID-19 concentrations from the year 2021 and 2022 as these are recent years and would be most relevant to understand current the COVID cliamte. We are able to create visualizations with the 2023 observations, but we decided to leave it out of our final analysis because data was only taken from January to April of 2023. We focused only on COVID-19 concentrations that were collected using RT-qPCR because dPCR only had about 50 observations (not enough for thorough analysis).
 
-After, cleaning and merging our raw datasets, our final dataset s is called ____ with variables: 
+<br />
+
+The raw mapping dataset has 58503 observations and 25 variables. For our purposes, we only kept 5 variables including waste_id, wttp_name, lat_wttp, long_wttp, and wrrf_abbreviation. The raw wastewater dataset has 4270 observations and 9 variables. For our purposes, we extracted the test date to month, year, and kept wrrf_name, concentration (n1 copies/L), and technology.
+
+Our final merged dataset (mapping and wastewater) for analysis is called **nyc_wastewater** with 4129 observations, and 8 variables. Those include lat_wttp, lon_wttp, month, day, year, wrrf_name, concentration, technology.
+
+<br />
 
 **Data dictionary:**
 
-* wrrf_name: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
+* lat_wttp: latitude of water facility location
 
-* wrrf_abbrev: abbreviation for wrrf_name
+* lon_wttp: longitude of water facility location
+
+* month: test date (month)
+
+* day: test date (day)
+
+* year: test date (year)
+
+* wrrf_name: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
 
 * concentration: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
 
-* 
+* technology: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
+
+<div class="panel panel-default">
+  <div class="Data dictionary">Panel heading</div>
+  <div class="panel-body">
+    * lat_wttp: latitude of water facility location
+
+* lon_wttp: longitude of water facility location
+
+* month: test date (month)
+
+* day: test date (day)
+
+* year: test date (year)
+
+* wrrf_name: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
+
+* concentration: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
+
+* technology: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
+  </div>
+</div>
+
+<br />
 
 ## Exploratory analysis
 
+Let's take a look at some graphical visualizations to identify any trends.
+
 ### Trends: Spaghetti plots
 
-**Average Covid-19 Concentration of each waste water facility in 2021**
+#### Average Covid-19 Concentration by location in 2021
 ```{r message=FALSE}
 spaghetti_plot_2021 <-
   rtqpcr |>
@@ -110,17 +174,20 @@ spaghetti_plot_2021 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
+       y = "Mean Covid-19 Concentration", 
        title = "Average Covid-19 Concentration of each waste water facility in 2021 in New York State") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6))
 
 spaghetti_plot_2021
 ```
 
 <br />
 
-**Average Covid-19 Concentration of each waste water facility in 2022**
+#### Average Covid-19 Concentration by location in 2022
 ```{r message=FALSE}
 spaghetti_plot_2022 <-
   rtqpcr |>
@@ -131,10 +198,14 @@ spaghetti_plot_2022 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State") + 
+       y = "Mean Covid-19 Concentration", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State",
+       color = "Water Facility") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6)) 
 
 spaghetti_plot_2022
 ```
@@ -143,7 +214,7 @@ spaghetti_plot_2022
 
 ### Trends: Boxplots
 
-**Average Covid-19 Concentration by waste water facility in 2021**
+#### Average Covid-19 Concentration by waste water facility in 2021
 ```{r message=FALSE}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
@@ -168,8 +239,8 @@ box_plot_2021
 
 <br />
 
-**Average Covid-19 Concentration by waste water facility in 2022**
-```{r}
+#### Average Covid-19 Concentration by waste water facility in 2022
+```{r message=FALSE}
 box_plot_2022 <- rtqpcr |> 
   filter(year == 2022) |> 
   group_by(month, wrrf_name) |> 
