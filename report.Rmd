@@ -9,7 +9,7 @@ output:
 
 ## Motivation
 
-COVID-19 cases are constantly fluctuating and to better understand recent trends, we decided to analyze SARS-CoV-2 concentrations in wastewater data for the possibility of future public health interventions.
+COVID-19 cases are constantly fluctuating and to better understand recent trends, we decided to analyze SARS-CoV-2 concentrations in wastewater data for the possibility of future public health interventions. New York City is a place with a highly dense population and any known sources of COVID-19 contamination easily affect and spread the disease rapidly. There is an abundance of early days research on the pandemic, but we were interested in the post-pandemic COVID-19 contamination, therefore we decided to look into NYC wastewater, shedding light on potential trends and hotspots.
 
 <br />
 
