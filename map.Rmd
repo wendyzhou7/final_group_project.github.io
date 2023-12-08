@@ -47,10 +47,7 @@ map <-
 
 wwtp <-
   read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
-```
 
-
-```{r clean the mapping data file and rename plant names}
 map_df <-
   map |>
   janitor::clean_names() |>
@@ -71,19 +68,13 @@ map_df <-
     "New York C   Newtown Creek WPCP" = "NC",
     "New York C   Wards Island WPCP" = "WI",
   ))
-```
 
-```{r clean the waste water data file}
 wwtp_df <-
   wwtp |>
   janitor:: clean_names()
-```
 
-```{r merge the waste water data file and mapping data file}
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
-```
 
-```{r choose the variables from the merged data file}
 nyc_wastewater <-
   merge_df |>
   rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
@@ -117,9 +108,6 @@ wttp_map <-
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") %>% 
   group_by(wrrf_name) %>%
   summarise(avg_conc_area = mean(concentration))
-
-nyc_wastewater %>% 
-  group_by(wrrf_name)
             
 map_df <- left_join(nyc_wastewater, wttp_map, by = "wrrf_name")
 ```
@@ -129,13 +117,9 @@ map <-
   map_df %>% 
   leaflet() |>
   addTiles() |>
-  addCircleMarkers(
+  addMarkers(
              lng = ~lon_wwtp,
              lat = ~lat_wwtp,
-             radius = 7,
-             stroke = TRUE,
-             fillOpacity = 0.75,
-             color = "skyblue",
              popup = ~paste(sep = "<br/>",
                             "<b>", wrrf_name,
                             "</b><br>Mean Concentration:", avg_conc_area, "(N1 Copies/L)")) %>% 
