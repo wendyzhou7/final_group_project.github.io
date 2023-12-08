@@ -104,9 +104,9 @@ nyc_wastewater <-
 
 <br />
 
-The provided R code generates a map that visualizes the distribution of SARS-CoV-2 concentrations in wastewater across various wastewater resource recovery facilities (WRRFs) in New York City. The dataset consists of two main files: "HydroWASTE_v10.csv" containing information about the WRRFs, and "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv" containing the concentration measurements.
+The provided R code generates a map that visualizes the distribution of SARS-CoV-2 concentrations in wastewater across various wastewater resource recovery facilities (WRRFs) in New York City. The dataset consists of two main files: "HydroWASTE" containing information about the WRRFs, and "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater" containing the concentration measurements.
 
-The first part of the code involves loading and cleaning the data. The WRRF information is read from "HydroWASTE_v10.csv," and relevant columns are selected and cleaned for further analysis. Abbreviations for WRRF names are created for easier reference. The concentration data from "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv" is loaded and cleaned, and the two datasets are merged based on the WRRF abbreviation.
+The first part of the code involves loading and cleaning the data. The WRRF information is read from "HydroWASTE" and relevant columns are selected and cleaned for further analysis. Abbreviations for WRRF names are created for easier reference. The concentration data from "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater" is loaded and cleaned, and the two datasets are merged based on the WRRF abbreviation.
 
 The resulting dataset, named "nyc_wastewater," is further processed to extract relevant information. Date information is separated into day, month, and year columns, and the dataset is filtered to remove rows with missing concentration values. Unnecessary columns are also dropped for simplicity.
 
