@@ -8,32 +8,42 @@ output:
 ---
 
 ## Motivation
+<div class="well well-sm">
 
 COVID-19 cases are constantly fluctuating and to better understand recent trends, we decided to analyze SARS-CoV-2 concentrations in wastewater data for the possibility of future public health interventions. New York City is a place with a highly dense population and any known sources of COVID-19 contamination easily affect and spread the disease rapidly. There is an abundance of early days research on the pandemic, but we were interested in the post-pandemic COVID-19 contamination, therefore we decided to look into NYC wastewater, shedding light on potential trends and hotspots.
+
+</div>
 
 <br />
 
 ## Related work
 
-*Anything that inspired you, such as a paper, a web site, or something we discussed in class.*
+<div class="well well-sm">
+
+According to the National Center for Disease and Control (CDC), wastewater surveillance can provide early warnings of COVID-19 spread to communities and to allow for public officials to take action more quickly. It is found that SARS-CoV-2 virus can be transferred to feces, which is a way to detect those who are contaminated even before they start to show symptoms.
+
+</div>
 
 <br />
 
 ## Initial questions
 
-<div class="well">
+<div class="well well-sm">
 1. What trends can we see from the NYC wastewater COVID-19 concentrations?
 2. Is there a significant difference in NYC COVID-19 wastewater concentrations by season?
 3. Is there a significant difference in COVID-19 wastewater concentrations by NYC borough?
 4. Are seasons and NYC boroughs a significant predictor of COVID-19 wastewater concentrations?
-</div>
+
 
 With our interest in the current COVID-19 climate in NYC, we first create data visualizations to see what trends are apparent. We saw a clear trend in high COVID-19 concentrations in the winter time and lower in the winter times. However, we knew we needed to test this hypothesis to make any conclusions. For the purposes of this project, takign locations into consideration would allow us to demonstrate our data analysis and visualizations skills.
+
+</div>
 
 <br />
 
 ## Data 
-
+<br />
+### About the data
 We used open data sources from 'NYC Open Data' and 'figshare':
 
 * SARS-CoV-2 concentrations measured in NYC Wastewater (NYC Open Data)
@@ -42,13 +52,21 @@ We used open data sources from 'NYC Open Data' and 'figshare':
 
 
 For our purposes, we have loaded the following R packages:
+
 * `tidyverse`
+
 * `ggridges`
+
 * `patchwork`
+
 * `readxl`
+
 * `lubridate`
+
 * `leaflet`
+
 * `readr`
+
 * `knitr`
 
 ```{r message=FALSE}
@@ -167,21 +185,21 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 **Data dictionary:**
 
 <div class="well">
-* lat_wttp: latitude of water facility location
+* `lat_wttp`: latitude of water facility location
 
-* lon_wttp: longitude of water facility location
+* `lon_wttp`: longitude of water facility location
 
-* month: test date (month)
+* `month`: test date (month)
 
-* day: test date (day)
+* `day`: test date (day)
 
-* year: test date (year)
+* `year`: test date (year)
 
-* wrrf_name: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
+* `wrrf_name`: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
 
-* concentration: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
+* `concentration`: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
 
-* technology: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
+* `technology`: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
 </div>
 
 <br />
@@ -189,7 +207,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 Here, we are reating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York State from 2020 to 2023.
 
 <br />
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 overall_trend <-
   nyc_wastewater |>
   filter(technology == "RT-qPCR") |>
@@ -202,7 +220,7 @@ overall_trend <-
 <br />
 
 Plotting Scatterplot
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 overall_trend |>
   ggplot(aes(x = month_avg, y = avg_conc)) + 
   geom_point(size = 3, alpha = .7) +
