@@ -388,14 +388,17 @@ div.tocify {
 recent trends, we decided to analyze SARS-CoV-2 concentrations in
 wastewater data for the possibility of future public health
 interventions.</p>
+<p><br /></p>
 </div>
 <div id="related-work" class="section level2">
 <h2>Related work</h2>
 <p><em>Anything that inspired you, such as a paper, a web site, or
 something we discussed in class.</em></p>
+<p><br /></p>
 </div>
 <div id="initial-questions" class="section level2">
 <h2>Initial questions</h2>
+<div class="well">
 <ol style="list-style-type: decimal">
 <li>What trends can we see from the NYC wastewater COVID-19
 concentrations?</li>
@@ -406,6 +409,7 @@ concentrations by NYC borough?</li>
 <li>Are seasons and NYC boroughs a significant predictor of COVID-19
 wastewater concentrations?</li>
 </ol>
+</div>
 <p>With our interest in the current COVID-19 climate in NYC, we first
 create data visualizations to see what trends are apparent. We saw a
 clear trend in high COVID-19 concentrations in the winter time and lower
@@ -413,6 +417,7 @@ in the winter times. However, we knew we needed to test this hypothesis
 to make any conclusions. For the purposes of this project, takign
 locations into consideration would allow us to demonstrate our data
 analysis and visualizations skills.</p>
+<p><br /></p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -424,15 +429,14 @@ Data)</p></li>
 </ul>
 <p>For our purposes, we have loaded the following R packages:</p>
 <ul>
-<li>tidyverse</li>
-<li>ggridges</li>
-<li>patchwork</li>
-<li>readxl</li>
-<li>lubridate</li>
-<li>leaflet</li>
-<li>plotly</li>
-<li>readr</li>
-<li>knitr</li>
+<li><code>tidyverse</code></li>
+<li><code>ggridges</code></li>
+<li><code>patchwork</code></li>
+<li><code>readxl</code></li>
+<li><code>lubridate</code></li>
+<li><code>leaflet</code></li>
+<li><code>readr</code></li>
+<li><code>knitr</code></li>
 </ul>
 <pre class="r"><code>library(tidyverse)
 library(ggridges)
@@ -1223,6 +1227,9 @@ RT-qPCR
 </tbody>
 </table>
 </div>
+<p><br /></p>
+<div id="data-cleaning" class="section level3">
+<h3>Data Cleaning</h3>
 <pre class="r"><code>map_df &lt;-
   map |&gt;
   janitor::clean_names() |&gt;
@@ -1242,9 +1249,7 @@ RT-qPCR
     &quot;New York C   Bowery Bay WPCP&quot; = &quot;BB&quot;,
     &quot;New York C   Newtown Creek WPCP&quot; = &quot;NC&quot;,
     &quot;New York C   Wards Island WPCP&quot; = &quot;WI&quot;,
-  ))
-
-# Raw mapping dataset has 58503 observations and 25 variables. For our purposes, we only kept 5 variables including waste_id, wttp_name, lat_wttp, long_wttp, and wrrf_abbreviation</code></pre>
+  ))</code></pre>
 <p><br /></p>
 <p>We decided to analyze COVID-19 concentrations from the year 2021 and
 2022 as these are recent years and would be most relevant to understand
@@ -1254,6 +1259,230 @@ because data was only taken from January to April of 2023. We focused
 only on COVID-19 concentrations that were collected using RT-qPCR
 because dPCR only had about 50 observations (not enough for thorough
 analysis).</p>
+<p><br /></p>
+<pre class="r"><code>wwtp_df &lt;-
+  wwtp |&gt;
+  janitor:: clean_names()</code></pre>
+<p><br /></p>
+<pre class="r"><code>merge_df &lt;- inner_join(map_df, wwtp_df, by = &quot;wrrf_abbreviation&quot;)</code></pre>
+<pre class="r"><code>nyc_wastewater &lt;-
+  merge_df |&gt;
+  rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |&gt;
+  drop_na(concentration) |&gt;
+  separate(sample_date, into = c(&quot;month&quot;, &quot;day&quot;, &quot;year&quot;), convert = TRUE) %&gt;% 
+   mutate(
+     year = as.character(year),
+     month = factor(month, levels = 1:12),
+     month = recode(month,
+                        &quot;1&quot; = &quot;January&quot;,
+                        &quot;2&quot; = &quot;February&quot;,
+                        &quot;3&quot; = &quot;March&quot;,
+                        &quot;4&quot; = &quot;April&quot;,
+                        &quot;5&quot; = &quot;May&quot;,
+                        &quot;6&quot; = &quot;June&quot;,
+                        &quot;7&quot; = &quot;July&quot;,
+                        &quot;8&quot; = &quot;August&quot;,
+                        &quot;9&quot; = &quot;September&quot;,
+                        &quot;10&quot; = &quot;October&quot;,
+                        &quot;11&quot; = &quot;November&quot;,
+                        &quot;12&quot; = &quot;December&quot;)) |&gt;
+  select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
+
+head(nyc_wastewater) %&gt;% 
+  knitr::kable(digits = 3) %&gt;% 
+  kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), font_size = 12) %&gt;% 
+  kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="font-size: 12px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+lat_wwtp
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+lon_wwtp
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+month
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+day
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+year
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+wrrf_name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+concentration
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+technology
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+August
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+1339
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+September
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+1065
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+September
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+394
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+September
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+316
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+September
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+1250
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40.788
+</td>
+<td style="text-align:right;">
+-73.923
+</td>
+<td style="text-align:left;">
+October
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+2020
+</td>
+<td style="text-align:left;">
+Wards Island
+</td>
+<td style="text-align:right;">
+1152
+</td>
+<td style="text-align:left;">
+RT-qPCR
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p><br /></p>
 <p>The raw mapping dataset has 58503 observations and 25 variables. For
 our purposes, we only kept 5 variables including waste_id, wttp_name,
@@ -1267,6 +1496,7 @@ variables. Those include lat_wttp, lon_wttp, month, day, year,
 wrrf_name, concentration, technology.</p>
 <p><br /></p>
 <p><strong>Data dictionary:</strong></p>
+<div class="well">
 <ul>
 <li><p>lat_wttp: latitude of water facility location</p></li>
 <li><p>lon_wttp: longitude of water facility location</p></li>
@@ -1280,34 +1510,58 @@ genetic material measured in wastewater influent.</p></li>
 <li><p>technology: COVID-19 concentration test detection method (either
 RT-qPCR or dPCR)</p></li>
 </ul>
-<div class="panel panel-default">
-<div class="Data dictionary">
-Panel heading
-</div>
-<div class="panel-body">
-<pre><code>* lat_wttp: latitude of water facility location</code></pre>
-<ul>
-<li><p>lon_wttp: longitude of water facility location</p></li>
-<li><p>month: test date (month)</p></li>
-<li><p>day: test date (day)</p></li>
-<li><p>year: test date (year)</p></li>
-<li><p>wrrf_name: Wastewater Resource Recovery Facility (waste water
-treatment plant) where sample was taken</p></li>
-<li><p>concentration: Concentration of the N1 target of SARS-CoV2
-genetic material measured in wastewater influent.</p></li>
-<li><p>technology: COVID-19 concentration test detection method (either
-RT-qPCR or dPCR)</p>
-</div></li>
-</ul>
 </div>
 <p><br /></p>
+<p>Here, we are reating the dataset for an overall trend for Covid-19
+concentration across the 14 waste water facilities within New York State
+from 2020 to 2023.</p>
+<p><br /></p>
+<pre class="r"><code>overall_trend &lt;-
+  nyc_wastewater |&gt;
+  filter(technology == &quot;RT-qPCR&quot;) |&gt;
+  select(-lat_wwtp, -lon_wwtp) |&gt;
+  group_by(year, month) |&gt;
+  summarise(avg_conc = mean(concentration)) |&gt;
+  unite(&quot;year_month&quot;,year, month, sep = &quot;_&quot;) |&gt;
+  mutate(month_avg = ymd(paste0(year_month, &quot;_01&quot;)))</code></pre>
+<p><br /></p>
+<p>Plotting Scatterplot</p>
+<pre class="r"><code>overall_trend |&gt;
+  ggplot(aes(x = month_avg, y = avg_conc)) + 
+  geom_point(size = 3, alpha = .7) +
+  geom_smooth(size = 2, se = FALSE, alpha = .3) +
+    labs(
+      x = &quot;Time&quot;, 
+      y = &quot;Monthly average Covid-19 concentration in waste water in NY (N/L)&quot;) + 
+  theme(axis.line = element_line(color = &quot;grey&quot;), 
+      panel.background = element_blank(), 
+      legend.position = &quot;none&quot;, 
+      panel.grid.major = element_line(color = &quot;light grey&quot;, linetype = &quot;dashed&quot;),
+      plot.title = element_text(hjust = 0.5)) + 
+  ggtitle(&quot;Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023&quot;)</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<br /></p>
+<pre class="r"><code>rtqpcr &lt;-
+  nyc_wastewater |&gt;
+  filter(year %in% c(2021, 2022), technology == &quot;RT-qPCR&quot;) |&gt;
+  select(-lat_wwtp, -lon_wwtp)
+# rtqpcr dataset with 2387 observations and 6 variables: month, day, year, wrrf_name, concentration, technology
+
+dpcr &lt;-
+  nyc_wastewater |&gt;
+  filter(year %in% c(2021, 2022), technology == &quot;dPCR&quot;) |&gt;
+  select(-lat_wwtp, -lon_wwtp)</code></pre>
+<p><br /></p>
+</div>
 </div>
 <div id="exploratory-analysis" class="section level2">
 <h2>Exploratory analysis</h2>
 <p>Let’s take a look at some graphical visualizations to identify any
 trends.</p>
+<p><br /></p>
 <div id="trends-spaghetti-plots" class="section level3">
 <h3>Trends: Spaghetti plots</h3>
+<p><br /></p>
 <div id="average-covid-19-concentration-by-location-in-2021"
 class="section level4">
 <h4>Average Covid-19 Concentration by location in 2021</h4>
@@ -1329,7 +1583,7 @@ class="section level4">
         legend.text = element_text(size = 6))
 
 spaghetti_plot_2021</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p><br /></p>
 </div>
 <div id="average-covid-19-concentration-by-location-in-2022"
@@ -1354,7 +1608,7 @@ class="section level4">
         legend.text = element_text(size = 6)) 
 
 spaghetti_plot_2022</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p><br /></p>
 </div>
 </div>
@@ -1381,8 +1635,8 @@ class="section level4">
   )
 
 box_plot_2021</code></pre>
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-ecead7e473a3cb0f52a0" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-ecead7e473a3cb0f52a0">{"x":{"visdat":{"ab4a60c03a28":["function () ","plotlyVisDat"]},"cur_data":"ab4a60c03a28","attrs":{"ab4a60c03a28":{"x":{},"y":{},"color":{},"colors":"viridis","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Mean concentration (N/L)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Area","type":"category","categoryorder":"array","categoryarray":["26th Ward","Bowery Bay","Coney Island","Hunts Point","Jamaica Bay","Newtown Creek","North River","Oakwood Beach","Owls Head","Port Richmond","Red Hook","Rockaway","Tallman Island","Wards Island"]},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(68,1,84,0.5)","x":[19404.444444444445,14387.75,11893.75,7312.3999999999996,2859.25,661.33333333333337,2733.1666666666665,8759.5555555555547,3922.7142857142858,2796.7142857142858,5947.166666666667,37849.666666666664],"y":["26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward"],"type":"box","orientation":"h","name":"26th Ward","marker":{"color":"rgba(68,1,84,1)","line":{"color":"rgba(68,1,84,1)"}},"line":{"color":"rgba(68,1,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(72,29,111,0.5)","x":[22236.125,14699.5,14500.5,7602.8000000000002,2465.875,949.22222222222217,3105.4000000000001,9738.75,3420.4285714285716,6998.4285714285716,9426,46098],"y":["Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay"],"type":"box","orientation":"h","name":"Bowery Bay","marker":{"color":"rgba(72,29,111,1)","line":{"color":"rgba(72,29,111,1)"}},"line":{"color":"rgba(72,29,111,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(69,53,129,0.5)","x":[16827.111111111109,18548.25,12572,8683.3999999999996,2709.25,1384,2065.8000000000002,8187.3999999999996,4576.1428571428569,4226.8571428571431,5169.333333333333,31841],"y":["Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island"],"type":"box","orientation":"h","name":"Coney Island","marker":{"color":"rgba(69,53,129,1)","line":{"color":"rgba(69,53,129,1)"}},"line":{"color":"rgba(69,53,129,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(61,77,138,0.5)","x":[22977.111111111109,16638.25,10327.75,4251.6000000000004,1587.5,626.11111111111109,2182.8000000000002,8187.125,4499,1580.5714285714287,3983,37614.833333333336],"y":["Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point"],"type":"box","orientation":"h","name":"Hunts Point","marker":{"color":"rgba(61,77,138,1)","line":{"color":"rgba(61,77,138,1)"}},"line":{"color":"rgba(61,77,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(52,97,141,0.5)","x":[32564.777777777777,17678,17449,9943.3999999999996,2009.375,680,3818.1666666666665,14072.1,7586,3869.7142857142858,7919.333333333333,50178.666666666664],"y":["Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay"],"type":"box","orientation":"h","name":"Jamaica Bay","marker":{"color":"rgba(52,97,141,1)","line":{"color":"rgba(52,97,141,1)"}},"line":{"color":"rgba(52,97,141,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(43,116,142,0.5)","x":[14701.222222222223,11006.25,13303.75,5051,2797.875,648.14285714285711,4342.2857142857147,5833.5,5192,3236.5714285714284,4613.166666666667,36904.666666666664],"y":["Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek"],"type":"box","orientation":"h","name":"Newtown Creek","marker":{"color":"rgba(43,116,142,1)","line":{"color":"rgba(43,116,142,1)"}},"line":{"color":"rgba(43,116,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(36,135,142,0.5)","x":[15331.444444444445,10068.75,5864,5265.8000000000002,1222.125,799.33333333333337,2193.75,5457,4052.5714285714284,3800.8571428571427,4488.666666666667,28600.166666666668],"y":["North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River"],"type":"box","orientation":"h","name":"North River","marker":{"color":"rgba(36,135,142,1)","line":{"color":"rgba(36,135,142,1)"}},"line":{"color":"rgba(36,135,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(31,153,138,0.5)","x":[16620.222222222223,8231.5,8873.5,11148.200000000001,7303.25,5424.8888888888887,7144.833333333333,7096.3999999999996,10237.857142857143,9110.6666666666661,3648.3333333333335,30185.666666666668],"y":["Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach"],"type":"box","orientation":"h","name":"Oakwood Beach","marker":{"color":"rgba(31,153,138,1)","line":{"color":"rgba(31,153,138,1)"}},"line":{"color":"rgba(31,153,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(37,172,130,0.5)","x":[29687.333333333332,26761.25,25045.5,15817.799999999999,3358,5637.7777777777774,6296.6000000000004,14868.299999999999,9454.4285714285706,6147.2857142857147,7836.166666666667,38890],"y":["Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head"],"type":"box","orientation":"h","name":"Owls Head","marker":{"color":"rgba(37,172,130,1)","line":{"color":"rgba(37,172,130,1)"}},"line":{"color":"rgba(37,172,130,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(64,189,114,0.5)","x":[19761.444444444445,11890.25,13368.25,9871,2416.5,1198.2222222222222,1923.2,7326.8000000000002,4773.1428571428569,2960.7142857142858,5404.666666666667,49603],"y":["Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond"],"type":"box","orientation":"h","name":"Port Richmond","marker":{"color":"rgba(64,189,114,1)","line":{"color":"rgba(64,189,114,1)"}},"line":{"color":"rgba(64,189,114,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(103,204,92,0.5)","x":[11529,8473.5,9281.5,3256.1999999999998,1240.375,1028.7142857142858,2979.1666666666665,4760.3000000000002,5945.1428571428569,3153.4285714285716,5572.666666666667,26757],"y":["Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook"],"type":"box","orientation":"h","name":"Red Hook","marker":{"color":"rgba(103,204,92,1)","line":{"color":"rgba(103,204,92,1)"}},"line":{"color":"rgba(103,204,92,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(151,216,62,0.5)","x":[15943.222222222223,7584,7358,5252.1999999999998,2382.125,546.125,1934.2,5097.6000000000004,3316,1590,1478.8333333333333,19011],"y":["Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway"],"type":"box","orientation":"h","name":"Rockaway","marker":{"color":"rgba(151,216,62,1)","line":{"color":"rgba(151,216,62,1)"}},"line":{"color":"rgba(151,216,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(203,225,30,0.5)","x":[18241.444444444445,15480.5,16568.5,8637.2000000000007,1714.75,819.375,2599.8000000000002,4637.7777777777774,3752.5714285714284,2217.4285714285716,5794.666666666667,24603.166666666668],"y":["Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island"],"type":"box","orientation":"h","name":"Tallman Island","marker":{"color":"rgba(203,225,30,1)","line":{"color":"rgba(203,225,30,1)"}},"line":{"color":"rgba(203,225,30,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(253,231,37,0.5)","x":[21926.222222222223,20222.75,13640.5,6798.1999999999998,2456.5,1214.7777777777778,2744.3333333333335,6464.2222222222226,4887.8571428571431,2689.4285714285716,5263.333333333333,42995],"y":["Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island"],"type":"box","orientation":"h","name":"Wards Island","marker":{"color":"rgba(253,231,37,1)","line":{"color":"rgba(253,231,37,1)"}},"line":{"color":"rgba(253,231,37,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-94d90f329666d4eeb292" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-94d90f329666d4eeb292">{"x":{"visdat":{"b0906ba2bc0b":["function () ","plotlyVisDat"]},"cur_data":"b0906ba2bc0b","attrs":{"b0906ba2bc0b":{"x":{},"y":{},"color":{},"colors":"viridis","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Mean concentration (N/L)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Area","type":"category","categoryorder":"array","categoryarray":["26th Ward","Bowery Bay","Coney Island","Hunts Point","Jamaica Bay","Newtown Creek","North River","Oakwood Beach","Owls Head","Port Richmond","Red Hook","Rockaway","Tallman Island","Wards Island"]},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(68,1,84,0.5)","x":[19404.444444444445,14387.75,11893.75,7312.3999999999996,2859.25,661.33333333333337,2733.1666666666665,8759.5555555555547,3922.7142857142858,2796.7142857142858,5947.166666666667,37849.666666666664],"y":["26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward"],"type":"box","orientation":"h","name":"26th Ward","marker":{"color":"rgba(68,1,84,1)","line":{"color":"rgba(68,1,84,1)"}},"line":{"color":"rgba(68,1,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(72,29,111,0.5)","x":[22236.125,14699.5,14500.5,7602.8000000000002,2465.875,949.22222222222217,3105.4000000000001,9738.75,3420.4285714285716,6998.4285714285716,9426,46098],"y":["Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay"],"type":"box","orientation":"h","name":"Bowery Bay","marker":{"color":"rgba(72,29,111,1)","line":{"color":"rgba(72,29,111,1)"}},"line":{"color":"rgba(72,29,111,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(69,53,129,0.5)","x":[16827.111111111109,18548.25,12572,8683.3999999999996,2709.25,1384,2065.8000000000002,8187.3999999999996,4576.1428571428569,4226.8571428571431,5169.333333333333,31841],"y":["Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island"],"type":"box","orientation":"h","name":"Coney Island","marker":{"color":"rgba(69,53,129,1)","line":{"color":"rgba(69,53,129,1)"}},"line":{"color":"rgba(69,53,129,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(61,77,138,0.5)","x":[22977.111111111109,16638.25,10327.75,4251.6000000000004,1587.5,626.11111111111109,2182.8000000000002,8187.125,4499,1580.5714285714287,3983,37614.833333333336],"y":["Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point"],"type":"box","orientation":"h","name":"Hunts Point","marker":{"color":"rgba(61,77,138,1)","line":{"color":"rgba(61,77,138,1)"}},"line":{"color":"rgba(61,77,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(52,97,141,0.5)","x":[32564.777777777777,17678,17449,9943.3999999999996,2009.375,680,3818.1666666666665,14072.1,7586,3869.7142857142858,7919.333333333333,50178.666666666664],"y":["Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay"],"type":"box","orientation":"h","name":"Jamaica Bay","marker":{"color":"rgba(52,97,141,1)","line":{"color":"rgba(52,97,141,1)"}},"line":{"color":"rgba(52,97,141,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(43,116,142,0.5)","x":[14701.222222222223,11006.25,13303.75,5051,2797.875,648.14285714285711,4342.2857142857147,5833.5,5192,3236.5714285714284,4613.166666666667,36904.666666666664],"y":["Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek"],"type":"box","orientation":"h","name":"Newtown Creek","marker":{"color":"rgba(43,116,142,1)","line":{"color":"rgba(43,116,142,1)"}},"line":{"color":"rgba(43,116,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(36,135,142,0.5)","x":[15331.444444444445,10068.75,5864,5265.8000000000002,1222.125,799.33333333333337,2193.75,5457,4052.5714285714284,3800.8571428571427,4488.666666666667,28600.166666666668],"y":["North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River"],"type":"box","orientation":"h","name":"North River","marker":{"color":"rgba(36,135,142,1)","line":{"color":"rgba(36,135,142,1)"}},"line":{"color":"rgba(36,135,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(31,153,138,0.5)","x":[16620.222222222223,8231.5,8873.5,11148.200000000001,7303.25,5424.8888888888887,7144.833333333333,7096.3999999999996,10237.857142857143,9110.6666666666661,3648.3333333333335,30185.666666666668],"y":["Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach"],"type":"box","orientation":"h","name":"Oakwood Beach","marker":{"color":"rgba(31,153,138,1)","line":{"color":"rgba(31,153,138,1)"}},"line":{"color":"rgba(31,153,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(37,172,130,0.5)","x":[29687.333333333332,26761.25,25045.5,15817.799999999999,3358,5637.7777777777774,6296.6000000000004,14868.299999999999,9454.4285714285706,6147.2857142857147,7836.166666666667,38890],"y":["Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head"],"type":"box","orientation":"h","name":"Owls Head","marker":{"color":"rgba(37,172,130,1)","line":{"color":"rgba(37,172,130,1)"}},"line":{"color":"rgba(37,172,130,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(64,189,114,0.5)","x":[19761.444444444445,11890.25,13368.25,9871,2416.5,1198.2222222222222,1923.2,7326.8000000000002,4773.1428571428569,2960.7142857142858,5404.666666666667,49603],"y":["Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond"],"type":"box","orientation":"h","name":"Port Richmond","marker":{"color":"rgba(64,189,114,1)","line":{"color":"rgba(64,189,114,1)"}},"line":{"color":"rgba(64,189,114,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(103,204,92,0.5)","x":[11529,8473.5,9281.5,3256.1999999999998,1240.375,1028.7142857142858,2979.1666666666665,4760.3000000000002,5945.1428571428569,3153.4285714285716,5572.666666666667,26757],"y":["Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook"],"type":"box","orientation":"h","name":"Red Hook","marker":{"color":"rgba(103,204,92,1)","line":{"color":"rgba(103,204,92,1)"}},"line":{"color":"rgba(103,204,92,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(151,216,62,0.5)","x":[15943.222222222223,7584,7358,5252.1999999999998,2382.125,546.125,1934.2,5097.6000000000004,3316,1590,1478.8333333333333,19011],"y":["Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway"],"type":"box","orientation":"h","name":"Rockaway","marker":{"color":"rgba(151,216,62,1)","line":{"color":"rgba(151,216,62,1)"}},"line":{"color":"rgba(151,216,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(203,225,30,0.5)","x":[18241.444444444445,15480.5,16568.5,8637.2000000000007,1714.75,819.375,2599.8000000000002,4637.7777777777774,3752.5714285714284,2217.4285714285716,5794.666666666667,24603.166666666668],"y":["Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island"],"type":"box","orientation":"h","name":"Tallman Island","marker":{"color":"rgba(203,225,30,1)","line":{"color":"rgba(203,225,30,1)"}},"line":{"color":"rgba(203,225,30,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(253,231,37,0.5)","x":[21926.222222222223,20222.75,13640.5,6798.1999999999998,2456.5,1214.7777777777778,2744.3333333333335,6464.2222222222226,4887.8571428571431,2689.4285714285716,5263.333333333333,42995],"y":["Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island"],"type":"box","orientation":"h","name":"Wards Island","marker":{"color":"rgba(253,231,37,1)","line":{"color":"rgba(253,231,37,1)"}},"line":{"color":"rgba(253,231,37,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p><br /></p>
 </div>
 <div id="average-covid-19-concentration-by-waste-water-facility-in-2022"
@@ -1406,11 +1660,12 @@ class="section level4">
   )
 
 box_plot_2021</code></pre>
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e36f7f12a87c92995faa" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-e36f7f12a87c92995faa">{"x":{"visdat":{"ab4a60c03a28":["function () ","plotlyVisDat"]},"cur_data":"ab4a60c03a28","attrs":{"ab4a60c03a28":{"x":{},"y":{},"color":{},"colors":"viridis","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Mean concentration (N/L)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Area","type":"category","categoryorder":"array","categoryarray":["26th Ward","Bowery Bay","Coney Island","Hunts Point","Jamaica Bay","Newtown Creek","North River","Oakwood Beach","Owls Head","Port Richmond","Red Hook","Rockaway","Tallman Island","Wards Island"]},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(68,1,84,0.5)","x":[19404.444444444445,14387.75,11893.75,7312.3999999999996,2859.25,661.33333333333337,2733.1666666666665,8759.5555555555547,3922.7142857142858,2796.7142857142858,5947.166666666667,37849.666666666664],"y":["26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward"],"type":"box","orientation":"h","name":"26th Ward","marker":{"color":"rgba(68,1,84,1)","line":{"color":"rgba(68,1,84,1)"}},"line":{"color":"rgba(68,1,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(72,29,111,0.5)","x":[22236.125,14699.5,14500.5,7602.8000000000002,2465.875,949.22222222222217,3105.4000000000001,9738.75,3420.4285714285716,6998.4285714285716,9426,46098],"y":["Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay"],"type":"box","orientation":"h","name":"Bowery Bay","marker":{"color":"rgba(72,29,111,1)","line":{"color":"rgba(72,29,111,1)"}},"line":{"color":"rgba(72,29,111,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(69,53,129,0.5)","x":[16827.111111111109,18548.25,12572,8683.3999999999996,2709.25,1384,2065.8000000000002,8187.3999999999996,4576.1428571428569,4226.8571428571431,5169.333333333333,31841],"y":["Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island"],"type":"box","orientation":"h","name":"Coney Island","marker":{"color":"rgba(69,53,129,1)","line":{"color":"rgba(69,53,129,1)"}},"line":{"color":"rgba(69,53,129,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(61,77,138,0.5)","x":[22977.111111111109,16638.25,10327.75,4251.6000000000004,1587.5,626.11111111111109,2182.8000000000002,8187.125,4499,1580.5714285714287,3983,37614.833333333336],"y":["Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point"],"type":"box","orientation":"h","name":"Hunts Point","marker":{"color":"rgba(61,77,138,1)","line":{"color":"rgba(61,77,138,1)"}},"line":{"color":"rgba(61,77,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(52,97,141,0.5)","x":[32564.777777777777,17678,17449,9943.3999999999996,2009.375,680,3818.1666666666665,14072.1,7586,3869.7142857142858,7919.333333333333,50178.666666666664],"y":["Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay"],"type":"box","orientation":"h","name":"Jamaica Bay","marker":{"color":"rgba(52,97,141,1)","line":{"color":"rgba(52,97,141,1)"}},"line":{"color":"rgba(52,97,141,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(43,116,142,0.5)","x":[14701.222222222223,11006.25,13303.75,5051,2797.875,648.14285714285711,4342.2857142857147,5833.5,5192,3236.5714285714284,4613.166666666667,36904.666666666664],"y":["Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek"],"type":"box","orientation":"h","name":"Newtown Creek","marker":{"color":"rgba(43,116,142,1)","line":{"color":"rgba(43,116,142,1)"}},"line":{"color":"rgba(43,116,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(36,135,142,0.5)","x":[15331.444444444445,10068.75,5864,5265.8000000000002,1222.125,799.33333333333337,2193.75,5457,4052.5714285714284,3800.8571428571427,4488.666666666667,28600.166666666668],"y":["North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River"],"type":"box","orientation":"h","name":"North River","marker":{"color":"rgba(36,135,142,1)","line":{"color":"rgba(36,135,142,1)"}},"line":{"color":"rgba(36,135,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(31,153,138,0.5)","x":[16620.222222222223,8231.5,8873.5,11148.200000000001,7303.25,5424.8888888888887,7144.833333333333,7096.3999999999996,10237.857142857143,9110.6666666666661,3648.3333333333335,30185.666666666668],"y":["Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach"],"type":"box","orientation":"h","name":"Oakwood Beach","marker":{"color":"rgba(31,153,138,1)","line":{"color":"rgba(31,153,138,1)"}},"line":{"color":"rgba(31,153,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(37,172,130,0.5)","x":[29687.333333333332,26761.25,25045.5,15817.799999999999,3358,5637.7777777777774,6296.6000000000004,14868.299999999999,9454.4285714285706,6147.2857142857147,7836.166666666667,38890],"y":["Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head"],"type":"box","orientation":"h","name":"Owls Head","marker":{"color":"rgba(37,172,130,1)","line":{"color":"rgba(37,172,130,1)"}},"line":{"color":"rgba(37,172,130,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(64,189,114,0.5)","x":[19761.444444444445,11890.25,13368.25,9871,2416.5,1198.2222222222222,1923.2,7326.8000000000002,4773.1428571428569,2960.7142857142858,5404.666666666667,49603],"y":["Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond"],"type":"box","orientation":"h","name":"Port Richmond","marker":{"color":"rgba(64,189,114,1)","line":{"color":"rgba(64,189,114,1)"}},"line":{"color":"rgba(64,189,114,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(103,204,92,0.5)","x":[11529,8473.5,9281.5,3256.1999999999998,1240.375,1028.7142857142858,2979.1666666666665,4760.3000000000002,5945.1428571428569,3153.4285714285716,5572.666666666667,26757],"y":["Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook"],"type":"box","orientation":"h","name":"Red Hook","marker":{"color":"rgba(103,204,92,1)","line":{"color":"rgba(103,204,92,1)"}},"line":{"color":"rgba(103,204,92,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(151,216,62,0.5)","x":[15943.222222222223,7584,7358,5252.1999999999998,2382.125,546.125,1934.2,5097.6000000000004,3316,1590,1478.8333333333333,19011],"y":["Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway"],"type":"box","orientation":"h","name":"Rockaway","marker":{"color":"rgba(151,216,62,1)","line":{"color":"rgba(151,216,62,1)"}},"line":{"color":"rgba(151,216,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(203,225,30,0.5)","x":[18241.444444444445,15480.5,16568.5,8637.2000000000007,1714.75,819.375,2599.8000000000002,4637.7777777777774,3752.5714285714284,2217.4285714285716,5794.666666666667,24603.166666666668],"y":["Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island"],"type":"box","orientation":"h","name":"Tallman Island","marker":{"color":"rgba(203,225,30,1)","line":{"color":"rgba(203,225,30,1)"}},"line":{"color":"rgba(203,225,30,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(253,231,37,0.5)","x":[21926.222222222223,20222.75,13640.5,6798.1999999999998,2456.5,1214.7777777777778,2744.3333333333335,6464.2222222222226,4887.8571428571431,2689.4285714285716,5263.333333333333,42995],"y":["Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island"],"type":"box","orientation":"h","name":"Wards Island","marker":{"color":"rgba(253,231,37,1)","line":{"color":"rgba(253,231,37,1)"}},"line":{"color":"rgba(253,231,37,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-7caf4a22d7eca3fac3bc" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-7caf4a22d7eca3fac3bc">{"x":{"visdat":{"b0906ba2bc0b":["function () ","plotlyVisDat"]},"cur_data":"b0906ba2bc0b","attrs":{"b0906ba2bc0b":{"x":{},"y":{},"color":{},"colors":"viridis","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"Mean concentration (N/L)"},"yaxis":{"domain":[0,1],"automargin":true,"title":"Area","type":"category","categoryorder":"array","categoryarray":["26th Ward","Bowery Bay","Coney Island","Hunts Point","Jamaica Bay","Newtown Creek","North River","Oakwood Beach","Owls Head","Port Richmond","Red Hook","Rockaway","Tallman Island","Wards Island"]},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(68,1,84,0.5)","x":[19404.444444444445,14387.75,11893.75,7312.3999999999996,2859.25,661.33333333333337,2733.1666666666665,8759.5555555555547,3922.7142857142858,2796.7142857142858,5947.166666666667,37849.666666666664],"y":["26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward","26th Ward"],"type":"box","orientation":"h","name":"26th Ward","marker":{"color":"rgba(68,1,84,1)","line":{"color":"rgba(68,1,84,1)"}},"line":{"color":"rgba(68,1,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(72,29,111,0.5)","x":[22236.125,14699.5,14500.5,7602.8000000000002,2465.875,949.22222222222217,3105.4000000000001,9738.75,3420.4285714285716,6998.4285714285716,9426,46098],"y":["Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay","Bowery Bay"],"type":"box","orientation":"h","name":"Bowery Bay","marker":{"color":"rgba(72,29,111,1)","line":{"color":"rgba(72,29,111,1)"}},"line":{"color":"rgba(72,29,111,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(69,53,129,0.5)","x":[16827.111111111109,18548.25,12572,8683.3999999999996,2709.25,1384,2065.8000000000002,8187.3999999999996,4576.1428571428569,4226.8571428571431,5169.333333333333,31841],"y":["Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island","Coney Island"],"type":"box","orientation":"h","name":"Coney Island","marker":{"color":"rgba(69,53,129,1)","line":{"color":"rgba(69,53,129,1)"}},"line":{"color":"rgba(69,53,129,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(61,77,138,0.5)","x":[22977.111111111109,16638.25,10327.75,4251.6000000000004,1587.5,626.11111111111109,2182.8000000000002,8187.125,4499,1580.5714285714287,3983,37614.833333333336],"y":["Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point","Hunts Point"],"type":"box","orientation":"h","name":"Hunts Point","marker":{"color":"rgba(61,77,138,1)","line":{"color":"rgba(61,77,138,1)"}},"line":{"color":"rgba(61,77,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(52,97,141,0.5)","x":[32564.777777777777,17678,17449,9943.3999999999996,2009.375,680,3818.1666666666665,14072.1,7586,3869.7142857142858,7919.333333333333,50178.666666666664],"y":["Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay","Jamaica Bay"],"type":"box","orientation":"h","name":"Jamaica Bay","marker":{"color":"rgba(52,97,141,1)","line":{"color":"rgba(52,97,141,1)"}},"line":{"color":"rgba(52,97,141,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(43,116,142,0.5)","x":[14701.222222222223,11006.25,13303.75,5051,2797.875,648.14285714285711,4342.2857142857147,5833.5,5192,3236.5714285714284,4613.166666666667,36904.666666666664],"y":["Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek","Newtown Creek"],"type":"box","orientation":"h","name":"Newtown Creek","marker":{"color":"rgba(43,116,142,1)","line":{"color":"rgba(43,116,142,1)"}},"line":{"color":"rgba(43,116,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(36,135,142,0.5)","x":[15331.444444444445,10068.75,5864,5265.8000000000002,1222.125,799.33333333333337,2193.75,5457,4052.5714285714284,3800.8571428571427,4488.666666666667,28600.166666666668],"y":["North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River","North River"],"type":"box","orientation":"h","name":"North River","marker":{"color":"rgba(36,135,142,1)","line":{"color":"rgba(36,135,142,1)"}},"line":{"color":"rgba(36,135,142,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(31,153,138,0.5)","x":[16620.222222222223,8231.5,8873.5,11148.200000000001,7303.25,5424.8888888888887,7144.833333333333,7096.3999999999996,10237.857142857143,9110.6666666666661,3648.3333333333335,30185.666666666668],"y":["Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach","Oakwood Beach"],"type":"box","orientation":"h","name":"Oakwood Beach","marker":{"color":"rgba(31,153,138,1)","line":{"color":"rgba(31,153,138,1)"}},"line":{"color":"rgba(31,153,138,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(37,172,130,0.5)","x":[29687.333333333332,26761.25,25045.5,15817.799999999999,3358,5637.7777777777774,6296.6000000000004,14868.299999999999,9454.4285714285706,6147.2857142857147,7836.166666666667,38890],"y":["Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head","Owls Head"],"type":"box","orientation":"h","name":"Owls Head","marker":{"color":"rgba(37,172,130,1)","line":{"color":"rgba(37,172,130,1)"}},"line":{"color":"rgba(37,172,130,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(64,189,114,0.5)","x":[19761.444444444445,11890.25,13368.25,9871,2416.5,1198.2222222222222,1923.2,7326.8000000000002,4773.1428571428569,2960.7142857142858,5404.666666666667,49603],"y":["Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond","Port Richmond"],"type":"box","orientation":"h","name":"Port Richmond","marker":{"color":"rgba(64,189,114,1)","line":{"color":"rgba(64,189,114,1)"}},"line":{"color":"rgba(64,189,114,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(103,204,92,0.5)","x":[11529,8473.5,9281.5,3256.1999999999998,1240.375,1028.7142857142858,2979.1666666666665,4760.3000000000002,5945.1428571428569,3153.4285714285716,5572.666666666667,26757],"y":["Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook","Red Hook"],"type":"box","orientation":"h","name":"Red Hook","marker":{"color":"rgba(103,204,92,1)","line":{"color":"rgba(103,204,92,1)"}},"line":{"color":"rgba(103,204,92,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(151,216,62,0.5)","x":[15943.222222222223,7584,7358,5252.1999999999998,2382.125,546.125,1934.2,5097.6000000000004,3316,1590,1478.8333333333333,19011],"y":["Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway","Rockaway"],"type":"box","orientation":"h","name":"Rockaway","marker":{"color":"rgba(151,216,62,1)","line":{"color":"rgba(151,216,62,1)"}},"line":{"color":"rgba(151,216,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(203,225,30,0.5)","x":[18241.444444444445,15480.5,16568.5,8637.2000000000007,1714.75,819.375,2599.8000000000002,4637.7777777777774,3752.5714285714284,2217.4285714285716,5794.666666666667,24603.166666666668],"y":["Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island","Tallman Island"],"type":"box","orientation":"h","name":"Tallman Island","marker":{"color":"rgba(203,225,30,1)","line":{"color":"rgba(203,225,30,1)"}},"line":{"color":"rgba(203,225,30,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(253,231,37,0.5)","x":[21926.222222222223,20222.75,13640.5,6798.1999999999998,2456.5,1214.7777777777778,2744.3333333333335,6464.2222222222226,4887.8571428571431,2689.4285714285716,5263.333333333333,42995],"y":["Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island","Wards Island"],"type":"box","orientation":"h","name":"Wards Island","marker":{"color":"rgba(253,231,37,1)","line":{"color":"rgba(253,231,37,1)"}},"line":{"color":"rgba(253,231,37,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p><br /> <em>Visualizations, summaries, and exploratory statistical
 analyses. Justify the steps you took, and show any major changes to your
 ideas.</em></p>
+<p><br /></p>
 </div>
 </div>
 </div>
