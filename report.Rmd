@@ -58,7 +58,7 @@ library(knitr)
 ```
 
 First, we imported the SARS-CoV-2 concentrations measured in NYC Wastewater and HydroWaste mapping data using the read_csv.
-```{r load the data files}
+```{r message=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
 
@@ -95,8 +95,8 @@ After, cleaning and merging our raw datasets, our final dataset s is called ____
 
 ## Exploratory analysis
 
-# Average Covid-19 Concentration of each waste water facility in 2021 in New York State
-```{r}
+### Average Covid-19 Concentration of each waste water facility in 2021 in New York State
+```{r message=FALSE}
 spaghetti_plot_2021 <-
   rtqpcr |>
   filter(year == 2021) |>
@@ -114,8 +114,8 @@ spaghetti_plot_2021 <-
 spaghetti_plot_2021
 ```
 
-# Average Covid-19 Concentration of each waste water facility in 2022 in New York State
-```{r}
+### Average Covid-19 Concentration of each waste water facility in 2022 in New York State
+```{r message=FALSE}
 spaghetti_plot_2022 <-
   rtqpcr |>
   filter(year == 2022) |>
@@ -133,8 +133,8 @@ spaghetti_plot_2022 <-
 spaghetti_plot_2022
 ```
 
-# Boxplot of Average Covid-19 Concentration by location in 2021
-```{r}
+### Boxplot of Average Covid-19 Concentration by location in 2021
+```{r message=FALSE}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
   group_by(month, wrrf_name) %>%
@@ -156,7 +156,7 @@ box_plot_2021
 
 ```
 
-# Boxplot of Average Covid-19 Concentration by location in 2022
+### Boxplot of Average Covid-19 Concentration by location in 2022
 ```{r}
 box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%

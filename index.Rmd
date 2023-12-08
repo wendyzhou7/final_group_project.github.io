@@ -9,12 +9,6 @@ output:
 
 <br />
 
-### Background
-
-And I can put all kinds of stuff on it!
-
-<br />
-
 <center>
 ![](image/waste_water_1.png){width=65%} 
 
