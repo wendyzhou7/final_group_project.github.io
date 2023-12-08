@@ -75,6 +75,8 @@ map_df <-
     "New York C   Newtown Creek WPCP" = "NC",
     "New York C   Wards Island WPCP" = "WI",
   ))
+
+# Raw mapping dataset has 58503 observations and 25 variables. For our purposes, we only kept 5 variables including waste_id, wttp_name, lat_wttp, long_wttp, and wrrf_abbreviation
 ```
 
 ```{r clean the waste water data file}
@@ -116,7 +118,7 @@ head(nyc_wastewater) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-
+Our final merged dataset (mapping and wastewater) for analysis is called **nyc_wastewater** with 4129 observations, and 8 variables. Those include lat_wttp, lon_wttp, month, day, year, wrrf_name, concentration, technology.
 
 Creating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York State from 2020 to 2023.
 
@@ -155,15 +157,18 @@ rtqpcr <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
   select(-lat_wwtp, -lon_wwtp)
+# rtqpcr dataset with 2387 observations and 6 variables: month, day, year, wrrf_name, concentration, technology
 
 dpcr <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "dPCR") |>
   select(-lat_wwtp, -lon_wwtp)
 ```
-dpcr is not large enough to do data analysis.
+dpcr is not large enough to do data analysis. There are only 56 observations and 6 variables.
 
-data analysis
+### data analysis
+
+#### spaghetti plot time trend 2021
 ```{r}
 spaghetti_plot_2021 <-
   rtqpcr |>
@@ -174,10 +179,13 @@ spaghetti_plot_2021 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
+       y = "Mean Covid-19 Concentration", 
        title = "Average Covid-19 Concentration of each waste water facility in 2021 in New York State") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6))
 
 spaghetti_plot_2021
 ```
@@ -185,7 +193,7 @@ spaghetti_plot_2021
 
 
 
-trend_plot_2022
+#### spaghetti plot time trend 2022
 ```{r}
 spaghetti_plot_2022 <-
   rtqpcr |>
@@ -196,15 +204,19 @@ spaghetti_plot_2022 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State") + 
+       y = "Mean Covid-19 Concentration", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State",
+       color = "Water Facility") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6)) 
 
 spaghetti_plot_2022
 ```
 
-tables 2021
+#### 2021 boxplot by location
 ```{r}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
@@ -219,7 +231,7 @@ box_plot_2021 <- rtqpcr %>%
   ) %>%
   layout(
     xaxis = list(title = "Mean concentration (N/L)"),
-    yaxis = list(title = "Area"),
+    yaxis = list(title = "Water Facility"),
     showlegend = FALSE
   )
 
@@ -227,7 +239,7 @@ box_plot_2021
 
 ```
 
-tables 2022
+#### 2022 boxplot by location
 ```{r}
 box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%
@@ -242,7 +254,7 @@ box_plot_2022 <- rtqpcr %>%
   ) %>%
   layout(
     xaxis = list(title = "Mean concentration (N/L)"),
-    yaxis = list(title = "Area"),
+    yaxis = list(title = "Water Facility"),
     showlegend = FALSE
   )
 
@@ -251,8 +263,8 @@ box_plot_2021
 
 
 ##Questions
-1 The concentration of covid for each station on average
-2 literature review foe two diff tech (RT-qPCR, dPCR)
-3 Year 2021 and 2022
+1. The concentration of covid for each station on average
+2. literature review foe two diff tech (RT-qPCR, dPCR)
+3. Year 2021 and 2022
 
 
