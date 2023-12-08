@@ -1,5 +1,5 @@
 ---
-title: "Map"
+title: "Interactive Map"
 output:
   html_document:
     toc: true
@@ -39,6 +39,9 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
+<br />
+
+### NYC Wastewater Resource Recovery Facility Distribution Map
 
 ```{r load the data files}
 map <-
@@ -99,9 +102,20 @@ nyc_wastewater <-
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
 ```
 
------------------------------------------------------------------------
+<br />
 
-New York City 14 Waste Water Plant Stations Map
+The provided R code generates a map that visualizes the distribution of SARS-CoV-2 concentrations in wastewater across various wastewater resource recovery facilities (WRRFs) in New York City. The dataset consists of two main files: "HydroWASTE_v10.csv" containing information about the WRRFs, and "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv" containing the concentration measurements.
+
+The first part of the code involves loading and cleaning the data. The WRRF information is read from "HydroWASTE_v10.csv," and relevant columns are selected and cleaned for further analysis. Abbreviations for WRRF names are created for easier reference. The concentration data from "SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv" is loaded and cleaned, and the two datasets are merged based on the WRRF abbreviation.
+
+The resulting dataset, named "nyc_wastewater," is further processed to extract relevant information. Date information is separated into day, month, and year columns, and the dataset is filtered to remove rows with missing concentration values. Unnecessary columns are also dropped for simplicity.
+
+In the second part of the code, a summary map is created using the Leaflet package. First, the average concentration for each WRRF is calculated for the years 2021 and 2022, considering only data from the "RT-qPCR" technology. This summary information is stored in the "wttp_map" dataframe. The original dataset is then left-joined with this summary data based on the WRRF name.
+
+The Leaflet map is then generated using the resulting "map_df" dataframe. It includes tiles from the CartoDB Positron map as a base layer. Circle markers are added to represent each WRRF's geographical location, and the radius and color of the circles are adjusted for better visualization. Popup information is also included, displaying the WRRF name and the mean concentration of SARS-CoV-2 in N1 copies per liter.
+
+The resulting map provides an intuitive representation of the distribution of SARS-CoV-2 concentrations across different WRRFs in New York City. Users can visually identify areas with higher or lower concentrations, and the popup information allows for more detailed insights into specific WRRFs. This visualization can be valuable for understanding the spatial patterns of viral concentrations in wastewater, which can be indicative of the prevalence of COVID-19 in different regions of the city. Researchers, policymakers, and public health officials can use this map to make informed decisions and prioritize areas for further investigation or intervention.
+
 ```{r}
 wttp_map <-
   nyc_wastewater %>% 
@@ -110,16 +124,18 @@ wttp_map <-
   summarise(avg_conc_area = mean(concentration))
             
 map_df <- left_join(nyc_wastewater, wttp_map, by = "wrrf_name")
-```
 
-```{r}
 map <-
   map_df %>% 
   leaflet() |>
   addTiles() |>
-  addMarkers(
+  addCircleMarkers(
              lng = ~lon_wwtp,
              lat = ~lat_wwtp,
+             radius = 7,
+             stroke = TRUE,
+             fillOpacity = 0.75,
+             color = "skyblue",
              popup = ~paste(sep = "<br/>",
                             "<b>", wrrf_name,
                             "</b><br>Mean Concentration:", avg_conc_area, "(N1 Copies/L)")) %>% 
