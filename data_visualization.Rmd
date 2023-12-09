@@ -42,8 +42,13 @@ Our goal in this project is to visualize and analyze the SARS-CoV-2 concentratio
 - How does the SARS-CoV-2 concentration vary among the 14 waste water facilities in NYC over the years of the pandemic?
 - How does the SARS-CoV-2 concentration distribute within each of the waste water facility over the years of the pandemic?
 
+<br />
 
-```{r load the data files}
+## Data Overview
+
+**Overview of what our dataset contains:**
+
+```{r load the data files, message=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
 
@@ -139,7 +144,9 @@ overall_trend <-
 
 <br />
 
-### Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023
+## Monthly Trend
+
+#### Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023
 
 ```{r}
 overall_trend |>
@@ -148,13 +155,14 @@ overall_trend |>
   geom_smooth(size = 2, se = FALSE, alpha = .3) +
     labs(
       x = "Time", 
-      y = "Monthly average Covid-19 concentration in waste water in NY (N/L)") + 
+      y = "Monthly Average Wastewater COVID-19 Concentration (N/L)") + 
   theme(axis.line = element_line(color = "grey"), 
       panel.background = element_blank(), 
       legend.position = "none", 
       panel.grid.major = element_line(color = "light grey", linetype = "dashed"),
-      plot.title = element_text(hjust = 0.5)) + 
-  ggtitle("Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023")
+      plot.title = element_text(hjust = 0.5),
+      axis.title.y = element_text(size = 9.5)) + 
+  ggtitle("Monthly Average Wastewater COVID-19 Concentration NY measured (2020-2023)")
 ```
 
 <br />
@@ -176,7 +184,9 @@ By comparing datasets from different techniques (RT-qPCR and dPCR), we found tha
 
 <br />
 
-### Average Covid-19 Concentration of each waste water facility in 2021 in New York City
+## Water Facility Trends
+
+#### Average Covid-19 Concentration of each waste water facility in 2021 in New York City
 
 ```{r}
 spaghetti_plot_2021 <-
@@ -189,7 +199,8 @@ spaghetti_plot_2021 <-
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC") + 
+       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC",
+       color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
         legend.key.size = unit(0.001, 'cm'),
@@ -201,7 +212,7 @@ spaghetti_plot_2021
 
 <br />
 
-### Average Covid-19 Concentration of each waste water facility in 2022 in New York City
+#### Average Covid-19 Concentration of each waste water facility in 2022 in New York City
 
 ```{r}
 spaghetti_plot_2022 <-
@@ -227,7 +238,7 @@ spaghetti_plot_2022
 
 <br />
 
-### Box Plot for Average Covid-19 Concentration of each waste water facility in 2021 in New York City
+#### Box Plot of Average Covid-19 Concentration by NYC Water facility in 2021
 
 ```{r}
 box_plot_2021 <- rtqpcr %>%
@@ -253,7 +264,7 @@ box_plot_2021
 
 <br />
 
-### Box Plot for Average Covid-19 Concentration of each waste water facility in 2021 in New York City
+#### Box Plot of Average Covid-19 Concentration by NYC Water facility in 2022
 
 ```{r}
 box_plot_2022 <- rtqpcr %>%
