@@ -132,7 +132,7 @@ map <-
              lat = ~lat_wwtp,
              radius = 7,
              stroke = TRUE,
-             fillOpacity = 0.75,
+             fillOpacity = 0,
              color = "skyblue",
              popup = ~paste(sep = "<br/>",
                             "<b>", wrrf_name,
