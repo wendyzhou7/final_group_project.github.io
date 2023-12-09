@@ -161,8 +161,7 @@ overall_trend |>
       legend.position = "none", 
       panel.grid.major = element_line(color = "light grey", linetype = "dashed"),
       plot.title = element_text(hjust = 0.5),
-      axis.title.y = element_text(size = 9.5)) + 
-  ggtitle("Monthly Average Wastewater COVID-19 Concentration NY measured (2020-2023)")
+      axis.title.y = element_text(size = 9.5))
 ```
 
 <br />
@@ -199,7 +198,6 @@ spaghetti_plot_2021 <-
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC",
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
@@ -225,7 +223,6 @@ spaghetti_plot_2022 <-
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in NYC",
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
