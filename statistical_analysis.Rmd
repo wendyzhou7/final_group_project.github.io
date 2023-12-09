@@ -18,6 +18,7 @@ library(plotly)
 library(readr)
 library(knitr)
 library(broom)
+library(kableExtra)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -218,12 +219,13 @@ borough_wastewater_box
 model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
 
 tidy_anova_borough <-
-  tidy(model_anova_borough)
+  tidy(model_anova_borough) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
 
-kable_borough <-
-  kable(tidy_anova_borough)
-
-kable_borough
+tidy_anova_borough
 ```
 
 <br />
@@ -281,12 +283,13 @@ season_wastewater_box
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
 tidy_anova_season <-
-  tidy(model_anova_season)
+  tidy(model_anova_season) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
 
-kable_season <-
-  kable(tidy_anova_season)
-
-kable_season
+tidy_anova_season
 ```
 
 <br />
@@ -303,12 +306,13 @@ data_fit_logistic <-
 
 # Get summary of the logistic regression model
 tidy_log <-
-  tidy(data_fit_logistic)
+  tidy(data_fit_logistic) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
 
-kable_log <-
-  kable(tidy_log)
-
-kable_log
+tidy_log
 ```
 
 
