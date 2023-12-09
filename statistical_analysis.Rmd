@@ -229,45 +229,36 @@ We created borough_id as a categorical variable by grouping wastewater plants ac
 
 <br />
 
-### Anova for boroughs
+### Anova for Boroughs
 
 ```{r Anova for boroughs, message=FALSE, warning=FALSE}
 # Perform ANOVA test
 model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
 
-# Get ANOVA table
-anova_borough_table <- summary(model_anova_borough)
+tidy_anova_borough <-
+  tidy(model_anova_borough)
 
-# Extract ANOVA table information
-anova_borough_results <- anova_borough_table[[1]]
+kable_borough <-
+  kable(tidy_anova_borough)
 
-# Format ANOVA results into a table
-formatted_borough_table <- as.data.frame(anova_borough_results)
-
-# Print the formatted ANOVA table
-print(formatted_borough_table)
+kable_borough
 ```
 
 <br />
 
-### Anova for seasons
+### Anova for Seasons
 
 ```{r Anova for seasons, message=FALSE}
 # Perform ANOVA test
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
-# Get ANOVA table
-anova_table_season <- summary(model_anova_season)
+tidy_anova_season <-
+  tidy(model_anova_season)
 
-# Extract ANOVA table information
-anova_results_season <- anova_table_season[[1]]
+kable_season <-
+  kable(tidy_anova_season)
 
-# Format ANOVA results into a table
-formatted_table_season <- as.data.frame(anova_results_season)
-
-# Print the formatted ANOVA table for seasons
-print(formatted_table_season)
-
+kable_season
 ```
 
 <br />
@@ -283,17 +274,13 @@ data_fit_logistic <-
   glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg)
 
 # Get summary of the logistic regression model
-summary_data_fit <- summary(data_fit_logistic)
+tidy_log <-
+  tidy(data_fit_logistic)
 
-# Extract coefficients and their statistics
-coef_table <- summary_data_fit$coefficients
+kable_log <-
+  kable(tidy_log)
 
-# Format coefficients table for better readability
-formatted_coef_table <- as.data.frame(coef_table)
-
-# Print the formatted coefficients table
-print(formatted_coef_table)
-
+kable_log
 ```
 
 
