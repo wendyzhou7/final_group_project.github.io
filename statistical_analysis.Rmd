@@ -150,6 +150,24 @@ data_reg =
     ))
     )
 
+```
+
+<br />
+
+We created borough_id as a categorical variable by grouping wastewater plants according to their respective five boroughs, including Manhattan, Brooklyn, Bronx, Queens, Staten Island. We set Manhattan as reference. We then created season_id as a categorical variable by grouping month according to four different seasons, including summer, autumn, winter, and spring. We set summer as the reference.
+
+<br />
+
+## ANOVA for Boroughs
+
+<br />
+
+#### Distribution of Average Covid-19 Wastewater Concentration By Borough
+
+<br />
+
+```{r}
+
 borough_wastewater_box <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -188,6 +206,38 @@ borough_wastewater_box <-
 
 borough_wastewater_box
 
+```
+
+
+<br />
+
+#### ANOVA for Boroughs
+
+```{r Anova for boroughs, message=FALSE, warning=FALSE}
+# Perform ANOVA test
+model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
+
+tidy_anova_borough <-
+  tidy(model_anova_borough)
+
+kable_borough <-
+  kable(tidy_anova_borough)
+
+kable_borough
+```
+
+<br />
+
+## ANOVA for Seasons
+
+<br />
+
+#### Distribution of Average Covid-19 Wastewater Concentration By Season
+
+<br />
+
+```{r}
+
 season_wastewater_box <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -224,29 +274,7 @@ season_wastewater_box
 
 <br />
 
-
-We created borough_id as a categorical variable by grouping wastewater plants according to their respective five boroughs, including Manhattan, Brooklyn, Bronx, Queens, Staten Island. We set Manhattan as reference. We then created season_id as a categorical variable by grouping month according to four different seasons, including summer, autumn, winter, and spring. We set summer as the reference.
-
-<br />
-
-### Anova for Boroughs
-
-```{r Anova for boroughs, message=FALSE, warning=FALSE}
-# Perform ANOVA test
-model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
-
-tidy_anova_borough <-
-  tidy(model_anova_borough)
-
-kable_borough <-
-  kable(tidy_anova_borough)
-
-kable_borough
-```
-
-<br />
-
-### Anova for Seasons
+#### Anova for Seasons
 
 ```{r Anova for seasons, message=FALSE}
 # Perform ANOVA test
@@ -267,7 +295,7 @@ First, we run ANOVA test for borough_id and season_id to see if there is a signi
 
 <br />
 
-### Logistic Regression
+## Logistic Regression
 
 ```{r, message=FALSE, warning=FALSE}
 data_fit_logistic <-
