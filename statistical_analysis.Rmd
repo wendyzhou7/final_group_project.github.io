@@ -7,7 +7,7 @@ output:
     toc_float: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -36,7 +36,7 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-```{r load the data files}
+```{r load the data files, message=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
 
@@ -99,7 +99,7 @@ nyc_wastewater <-
 Manhattan, Brooklyn, Bronx, Queens, Staten Island are assigned 0-4, Manhattan is assigned as reference. 
 Summer, Spring, Autumn, Winter are assigned 0-3, Summer is assigned as reference.
 
-```{r making boroughs as categorical variables}
+```{r making boroughs as categorical variables, message=FALSE}
 borough_wastewater <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -198,7 +198,7 @@ borough_wastewater_box
 
 <br />
 
-```{r}
+```{r, message=FALSE}
 season_wastewater_box <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -237,7 +237,7 @@ season_wastewater_box
 
 ### Anova for boroughs
 
-```{r Anova for boroughs}
+```{r Anova for boroughs, message=FALSE, warning=FALSE}
 model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
 summary(model_anova_borough)
 
@@ -247,7 +247,7 @@ summary(model_anova_borough)
 
 ### Anova for seasons
 
-```{r Anova for seasons}
+```{r Anova for seasons, message=FALSE}
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
 summary(model_anova_season)
@@ -257,7 +257,7 @@ summary(model_anova_season)
 
 ### Logistic Regression
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 data_fit_logistic =
   glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg)
 

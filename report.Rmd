@@ -20,7 +20,7 @@ COVID-19 cases are constantly fluctuating and to better understand recent trends
 
 <div class="well well-sm">
 
-According to the National Center for Disease and Control (CDC), wastewater surveillance can provide early warnings of COVID-19 spread to communities and to allow for public officials to take action more quickly. It is found that SARS-CoV-2 virus can be transferred to feces, which is a way to detect those who are contaminated even before they start to show symptoms.
+According to the National Center for Disease and Control (CDC), wastewater surveillance can provide early warnings of COVID-19 spread to communities and to allow for public officials to take action more quickly. It is found that SARS-CoV-2 virus can be transferred to feces, which is a way to detect those who are contaminated even before they start to show symptoms. We were inspired by the New York State's ongoing/weekly updated COVID-19 Wastewater Surveillance system. For the purposes of our project, we thought that we can do something similar by focusing on NYC wastewater and analyze any statistically significant differences that you may not get from a government website.
 
 </div>
 
@@ -274,7 +274,8 @@ spaghetti_plot_2021 <-
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC") + 
+       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC",
+       color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
         legend.key.size = unit(0.001, 'cm'),
@@ -297,8 +298,7 @@ spaghetti_plot_2022 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in NYC",
+       y = "Mean Covid-19 Concentration",
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),

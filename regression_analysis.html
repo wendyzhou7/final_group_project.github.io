@@ -9,13 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jianing Liu" />
 
-<meta name="date" content="2023-12-04" />
 
-<title>Regression and Analysis</title>
+<title>Regression Analysis</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -284,24 +282,15 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Regression and Analysis</h1>
-<h4 class="author">Jianing Liu</h4>
-<h4 class="date">2023-12-04</h4>
+<h1 class="title toc-ignore">Regression Analysis</h1>
 
 </div>
 
 
 <pre class="r"><code>map &lt;-
-  read_csv(&quot;data/HydroWASTE_v10.csv&quot;)</code></pre>
-<pre><code>## Rows: 58502 Columns: 25
-## ── Column specification ──────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr  (5): WWTP_NAME, COUNTRY, CNTRY_ISO, STATUS, LEVEL
-## dbl (20): WASTE_ID, SOURCE, ORG_ID, LAT_WWTP, LON_WWTP, QUAL_LOC, LAT_OUT, L...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>head(map) %&gt;% 
+  read_csv(&quot;data/HydroWASTE_v10.csv&quot;)
+
+head(map) %&gt;% 
   knitr::kable(digits = 3) %&gt;% 
   kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), font_size = 12) %&gt;% 
   kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)</code></pre>
@@ -854,16 +843,9 @@ Advanced
 </table>
 </div>
 <pre class="r"><code>wwtp &lt;-
-  read_csv(&quot;data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv&quot;)</code></pre>
-<pre><code>## Rows: 4270 Columns: 9
-## ── Column specification ──────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (6): Sample Date, Test date, WRRF Name, WRRF Abbreviation, Annotation, T...
-## num (3): Concentration SARS-CoV-2 gene target (N1 Copies/L), Per capita SARS...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>head(wwtp) %&gt;% 
+  read_csv(&quot;data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv&quot;)
+
+head(wwtp) %&gt;% 
   knitr::kable(digits = 3) %&gt;% 
   kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;), font_size = 12) %&gt;% 
   kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)</code></pre>
@@ -1162,8 +1144,6 @@ assigned 0-4, Manhattan is assigned as reference</p>
       &quot;Staten Island&quot; ~ 4
     ))
     )</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;month&#39;, &#39;year&#39;.
-## You can override using the `.groups` argument.</code></pre>
 <p>Creating dataset for regression analysis, assigned months to seasons
 and use summer as reference.</p>
 <pre class="r"><code>data_reg =
