@@ -191,6 +191,10 @@ By comparing datasets from different techniques (RT-qPCR and dPCR), we found tha
 
 <br />
 
+Spaghetti plots are useful for visualizing overall trends across the 14 water facility (WRRF) groups because they display individual trajectories for each group on the same graph. We would also be able to make comparisons of patterns and variations over time. 
+
+<br />
+
 #### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2021 in New York City
 
 ```{r}
@@ -216,6 +220,10 @@ spaghetti_plot_2021
 
 <br />
 
+Based on the spaghetti plot in 2021, all water facilities follow a clear trend. The summer time months (May to July) have lowest mean wastewater COVID-19 concentrations, while the winter months (December and January) have the highest mean wastewater COVID-19 concentration. The highest mean concentration goes up to 50,000 N1/L and the lowest means go down to ~2000 N1/L.
+
+<br />
+
 #### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2022 in New York City
 
 ```{r}
@@ -238,6 +246,10 @@ spaghetti_plot_2022 <-
 
 spaghetti_plot_2022
 ```
+
+<br />
+
+Compared to 2021, 2022 water facilities have overall higher mean wastewater COVID-19 concentrations. All water facilities follow a similar  trend. In 2022, spring (March) has the lowest mean concentration of about ~5,000 N1/L across all water facilities. The winter months ( January, December, February) have the highest mean wastewater COVID-19 concentration. However, it seems that in 2022, the mean concentrations have more variability by water facility location as shown by the graph.
 
 <br />
 

@@ -155,7 +155,7 @@ data_reg =
 
 <br />
 
-We created borough_id as a categorical variable by grouping wastewater plants according to their respective five boroughs, including Manhattan, Brooklyn, Bronx, Queens, Staten Island. We set Manhattan as reference. We then created season_id as a categorical variable by grouping month according to four different seasons, including summer, autumn, winter, and spring. We set summer as the reference.
+We are interested in whether there are potential relationships: 1) between SARS-CoV-2 concentrations in wastewater and different wastewater plants by their borough location and 2) between SARS-CoV-2 concentrations in wastewater and different seasons across the year. We hope to describe patterns according to borough and season fluctuation using ANOVA and logistic regression analysis on this dataset and hopefully assist stakeholders on future policy-making processes. We tested SARS-CoV-2 concentrations in wastewater by grouping Wastewater Resource Recovery Facilities together with respect to their borough locations, including Manhattan, Brooklyn, Bronx, Queens, and Staten Island, with Manhattan as the reference. We then tested SARS-CoV-2 concentrations in wastewater by grouping  months with respect to four seasons, including summer, autumn, winter, and spring, with summer as the reference.
 
 <br />
 
@@ -329,7 +329,7 @@ tidy_anova_season
 <br />
 •	statistic (F-statistic): 32.5841
 <br />
-•	p-value: ~0
+•	p-value: 1.7e-18
 <br />
 •	Within-group (Residuals):
 <br />
@@ -361,8 +361,6 @@ tidy_log <-
 tidy_log
 ```
 
-
 <br />
 
-
-In addition, we tried to fit a logistic regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.
+Then, we tried to fit regression models by using borough_id and season_id as explanatory variables and the average SARS-CoV-2 concentrations in wastewater as response variables. From the result, almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2 (indicating winter). Therefore, we can conclude that there could be an association between the average SARS-CoV-2 concentrations in wastewater and winter as an explanatory variable.
