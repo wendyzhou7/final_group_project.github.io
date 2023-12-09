@@ -96,7 +96,8 @@ nyc_wastewater <-
 
 <br />
 
-Manhattan, Brooklyn, Bronx, Queens, Staten Island is assigned 0-4, Manhattan is assigned as reference
+Manhattan, Brooklyn, Bronx, Queens, Staten Island are assigned 0-4, Manhattan is assigned as reference. 
+Summer, Spring, Autumn, Winter are assigned 0-3, Summer is assigned as reference.
 
 ```{r making boroughs as categorical variables}
 borough_wastewater <-
@@ -150,16 +151,12 @@ data_reg =
   mutate (season_id = as.factor(case_match(
       season,
       "Summer" ~ 0,
-      "Autumn" ~ 1,
-      "Winter" ~ 2,
-      "Spring" ~ 3
+      "Spring" ~ 1,
+      "Autumn" ~ 2,
+      "Winter" ~ 3
     ))
     )
-```
 
-<br />
-
-```{r}
 borough_wastewater_box <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
