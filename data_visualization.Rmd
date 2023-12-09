@@ -35,16 +35,18 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 waste water facilities located in the New York City. However, the visualization process is not easily achieved as the NYC waste water dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of wastewater facilities within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for waste water facilities in many countries, containing USA. 
+Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 Wastewater Resource Recovery Facilities(WRRFs) located in the New York City. However, the visualization process is not easily achieved as the NYC wastewater dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of WRRFs within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for WRRFs in many countries, containing USA. 
 
 - How to create a dataset which contains both SARS-CoV-2 data and geographic location data?
-- what is the overall SARS-CoV-2 distribution inside waste water across NYC over the years of the pandemic?
-- How does the SARS-CoV-2 concentration vary among the 14 waste water facilities in NYC over the years of the pandemic?
-- How does the SARS-CoV-2 concentration distribute within each of the waste water facility over the years of the pandemic?
+- what is the overall SARS-CoV-2 distribution inside wastewater across NYC over the years of the pandemic?
+- How does the SARS-CoV-2 concentration vary among the 14 Wastewater Resource Recovery Facilities(WRRFs) in NYC over the years of the pandemic?
+- How does the SARS-CoV-2 concentration distribute within each of the Wastewater Resource Recovery Facilities(WRRFs) over the years of the pandemic?
 
 <br />
 
 ## Data Overview
+
+<br />
 
 **Overview of what our dataset contains:**
 
@@ -144,9 +146,11 @@ overall_trend <-
 
 <br />
 
-## Monthly Trend
+## Overall Trend Over Pandemic
 
-#### Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023
+<br />
+
+#### Monthly average Covid-19 concentration in wastewater in NY measured from 2020 to 2023
 
 ```{r}
 overall_trend |>
@@ -183,9 +187,11 @@ By comparing datasets from different techniques (RT-qPCR and dPCR), we found tha
 
 <br />
 
-## Water Facility Trends
+## NYC Wastewater Resource Recovery Facilities Trend
 
-#### Average Covid-19 Concentration of each waste water facility in 2021 in New York City
+<br />
+
+#### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2021 in New York City
 
 ```{r}
 spaghetti_plot_2021 <-
@@ -210,7 +216,7 @@ spaghetti_plot_2021
 
 <br />
 
-#### Average Covid-19 Concentration of each waste water facility in 2022 in New York City
+#### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2022 in New York City
 
 ```{r}
 spaghetti_plot_2022 <-
@@ -235,7 +241,11 @@ spaghetti_plot_2022
 
 <br />
 
-#### Box Plot of Average Covid-19 Concentration by NYC Water facility in 2021
+We decided to use boxplots to represent the distribution of COVID-19 concentration by wastewater facility because boxplots  give concise  visual summaries of the distributions by displaying key statistics such as the median, quartiles, and potential outliers.
+
+<br />
+
+#### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2021
 
 ```{r}
 box_plot_2021 <- rtqpcr %>%
@@ -261,7 +271,11 @@ box_plot_2021
 
 <br />
 
-#### Box Plot of Average Covid-19 Concentration by NYC Water facility in 2022
+Based on the boxplots, the Owls Head Wastewater facility has the largest interquartile range with some right-skewness, which means the average concentration varies the most in this location with outliers. The Owls Head wastewater facility has the highest median of >10,000 N/L of COVID-19 concentration while all other wastewater facilities have on average less than 10,000 N/L of COVID-19 concentration.
+
+<br />
+
+#### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2022
 
 ```{r}
 box_plot_2022 <- rtqpcr %>%
@@ -283,3 +297,9 @@ box_plot_2022 <- rtqpcr %>%
 
 box_plot_2021
 ```
+
+<br />
+
+Though the exact numbers vary, the trends in 2022 are the same as in 2021.
+
+<br />
