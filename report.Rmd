@@ -73,12 +73,12 @@ For our purposes, we have loaded the following R packages:
 
 * `broom`
 
-* `kableExtra`
-
 * `plotly`
 
+* `kableExtra`
 
-```{r message=FALSE}
+
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggridges)
 library(patchwork)
@@ -97,7 +97,7 @@ First, we imported the SARS-CoV-2 concentrations measured in NYC Wastewater and 
 
 Here is a glimpse of the types of variables we have:
 
-```{r message=FALSE}
+```{r message=FALSE,warning=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
 
@@ -218,7 +218,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 <br />
 
-Here, we are reaDing the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
+Here, we are reading the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
 
 <br />
 ```{r message=FALSE, warning=FALSE}
@@ -233,7 +233,7 @@ overall_trend <-
 ```
 
 <br />
-```{r subdatset, message=FALSE}
+```{r subdatset, message=FALSE, warning=FALSE}
 rtqpcr <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -255,7 +255,12 @@ Let's take a look at some graphical visualizations to identify any trends.
 
 <br />
 
-#### Monthly Average Covid-19 Concentration in Wastewater in NYC from 2020 to 2023
+### Overall Trend Over Pandemic
+
+<br />
+
+#### Monthly average Covid-19 concentration in wastewater in NY measured from 2020 to 2023
+
 ```{r message=FALSE, warning=FALSE}
 overall_trend |>
   ggplot(aes(x = month_avg, y = avg_conc)) + 
@@ -263,21 +268,45 @@ overall_trend |>
   geom_smooth(size = 2, se = FALSE, alpha = .3) +
     labs(
       x = "Time", 
-      y = "Average Covid-19 concentration (N/L)") + 
+      y = "Monthly Average Wastewater COVID-19 Concentration (N/L)") + 
   theme(axis.line = element_line(color = "grey"), 
       panel.background = element_blank(), 
       legend.position = "none", 
       panel.grid.major = element_line(color = "light grey", linetype = "dashed"),
-      plot.title = element_text(hjust = 0.5))
+      plot.title = element_text(hjust = 0.5),
+      axis.title.y = element_text(size = 9.5))
 ```
 
 <br />
 
-### Trends: Spaghetti plots
+```{r message=FALSE, warning=FALSE}
+rtqpcr <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  select(-lat_wwtp, -lon_wwtp)
+
+dpcr <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "dPCR") |>
+  select(-lat_wwtp, -lon_wwtp)
+```
+
+
+By comparing datasets from different techniques (RT-qPCR and dPCR), we found that "dPCR" had only few observations, which was insufficient for some analysis to show trends in Covid- 19 concentrations. So we decide to use only the dataset with technology "RT-qPCR". Also "RT-qPCR" data for 2020 and 2023 are incomplete, so we only used data from 2021 and 2022 for our analysis.
+
 <br />
 
-#### Average Covid-19 Concentration by location in 2021
-```{r, message = FALSE}
+### NYC WRRFs Trend
+
+<br />
+
+Spaghetti plots are useful for visualizing overall trends across the 14 water facility (WRRF) groups because they display individual trajectories for each group on the same graph. We would also be able to make comparisons of patterns and variations over time. 
+
+<br />
+
+#### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2021 in New York City
+
+```{r message=FALSE, warning=FALSE}
 spaghetti_plot_2021 <-
   rtqpcr |>
   filter(year == 2021) |>
@@ -300,8 +329,13 @@ spaghetti_plot_2021
 
 <br />
 
-#### Average Covid-19 Concentration by location in 2022
-```{r, message = FALSE}
+Based on the spaghetti plot in 2021, all water facilities follow a clear trend. The summer time months (May to July) have lowest mean wastewater COVID-19 concentrations, while the winter months (December and January) have the highest mean wastewater COVID-19 concentration. The highest mean concentration goes up to 50,000 N1/L and the lowest means go down to ~2000 N1/L.
+
+<br />
+
+#### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2022 in New York City
+
+```{r message=FALSE, warning=FALSE}
 spaghetti_plot_2022 <-
   rtqpcr |>
   filter(year == 2022) |>
@@ -324,10 +358,17 @@ spaghetti_plot_2022
 
 <br />
 
-### Trends: Boxplots
+Compared to 2021, 2022 water facilities have overall higher mean wastewater COVID-19 concentrations. All water facilities follow a similar  trend. In 2022, spring (March) has the lowest mean concentration of about ~5,000 N1/L across all water facilities. The winter months ( January, December, February) have the highest mean wastewater COVID-19 concentration. However, it seems that in 2022, the mean concentrations have more variability by water facility location as shown by the graph.
 
-#### Average Covid-19 Concentration by waste water facility in 2021
-```{r, message = FALSE}
+<br />
+
+We decided to use boxplots to represent the distribution of COVID-19 concentration by wastewater facility because boxplots  give concise  visual summaries of the distributions by displaying key statistics such as the median, quartiles, and potential outliers.
+
+<br />
+
+#### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2021
+
+```{r message=FALSE, warning=FALSE}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
   group_by(month, wrrf_name) %>%
@@ -348,12 +389,16 @@ box_plot_2021 <- rtqpcr %>%
 box_plot_2021
 
 ```
-```
 
 <br />
 
-#### Average Covid-19 Concentration by waste water facility in 2022
-```{r, message = FALSE}
+Based on the boxplots, the Owls Head Wastewater facility has the largest interquartile range with some right-skewness, which means the average concentration varies the most in this location with outliers. The Owls Head wastewater facility has the highest median of >10,000 N/L of COVID-19 concentration while all other wastewater facilities have on average less than 10,000 N/L of COVID-19 concentration.
+
+<br />
+
+#### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2022
+
+```{r message=FALSE, warning=FALSE}
 box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%
   group_by(month, wrrf_name) %>%
@@ -373,10 +418,15 @@ box_plot_2022 <- rtqpcr %>%
 
 box_plot_2022
 ```
+
+<br />
+
+The 2022 box plots seem to reflect the trends we also see from our corresponding spaghetti plot. Similar to 2021, it appears that Owls Head water facility also has the most variability in addition to Jamaica Bay. There is an overall higher mean concentration across all water facilities in 2022 with the majority of the facilities having a >10,000 N1/L COVID-19 mean concentration. Bowery Bay, Jamaica Bay, Owls Head, and Tallman Island water facilities have >20,000 N1/L COVID-19 mean concentration.
+
 <br />
 
 ### Interactive Map
-```{r load the data files, message = FALSE}
+```{r load the data files, message=FALSE, warning=FALSE}
 map <-
   read_csv("data/HydroWASTE_v10.csv")
   
@@ -443,7 +493,14 @@ wttp_map <-
 map_df <- left_join(nyc_wastewater, wttp_map, by = "wrrf_name")
 ```
 
-```{r}
+
+<br />
+
+Our objective is to generate a visual representation of SARS-CoV-2 concentrations in wastewater across various Wastewater Resource Recovery Facilities (WRRFs) in New York City.
+
+The first part of the code involves data loading and cleaning. For the WRRF information data, relevant columns are selected and prepared for further analysis. Abbreviations for WRRF names are established for convenient reference. Concentration data is also loaded and cleaned, and the two datasets are merged based on the WRRF abbreviation. In the merged dataset, date information is separated into day, month, and year columns, and the dataset is filtered to drop rows with missing concentration values. 
+
+```{r message=FALSE, warning=FALSE}
 map <-
   map_df %>% 
   leaflet() |>
@@ -465,22 +522,289 @@ map
 
 <br />
 
-In the subsequent part of the code, a map is constructed using the Leaflet package. Initially, the average concentration for each WRRF is computed for the years 2021 and 2022, considering only data from the "RT-qPCR" technology. The original dataset is then left-joined with this summary data based on the WRRF name.
+A map is constructed using the Leaflet package. Initially, the average concentration for each WRRF is aggregated for the years 2021 and 2022, considering only data from the "RT-qPCR" technology. The original dataset is then left-joined with this summary data based on the WRRF name.
 
-The Leaflet map is generated using the resulting "map_df" dataframe, featuring tiles from the CartoDB Positron map as a base layer. Circle markers are incorporated to denote each WRRF's geographical location, and the radius and color of the circles are adjusted for enhanced visualization. Popup information is included, showcasing the WRRF name and the mean concentration of SARS-CoV-2 (N1/L).
+The Leaflet map is generated using the resulting dataframe, featuring tiles from the CartoDB Positron map as a base layer. Circle markers are incorporated to denote each WRRF's geographical location, and the radius and color of the circles are adjusted for enhanced visualization. Popup information is included, showcasing the WRRF name and the mean concentration of SARS-CoV-2 (N1/L).
 
-The resulting map offers an vivid depiction of the distribution of SARS-CoV-2 concentrations across different WRRFs in New York City, allowing for visual distinctions among areas with higher or lower concentrations, and the popup information facilitates more detailed insights into specific WRRFs.
+The map offers an vivid depiction of the distribution of SARS-CoV-2 concentrations across different WRRFs in New York City, allowing for visual distinctions among areas with higher or lower concentrations, and the popup information facilitates more detailed insights into specific WRRFs.
 
 <br />
 
 ## Additional analysis
 <br />
 
-### ANOVA
+```{r load the analysis data files, message=FALSE, warning=FALSE}
+borough_wastewater <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate(
+    boroughs = case_match(wrrf_name,
+                         "26th Ward" ~ "Brooklyn",
+                         "Bowery Bay" ~ "Manhattan",
+                         "Coney Island" ~ "Brooklyn",
+                         "Hunts Point" ~ "Bronx",
+                         "Jamaica Bay" ~ "Queens",
+                         "Newtown Creek" ~ "Queens",
+                         "North River" ~ "Manhattan",
+                         "Oakwood Beach" ~ "Staten Island",
+                         "Owls Head" ~ "Brooklyn",
+                         "Port Richmond" ~ "Staten Island",
+                         "Red Hook" ~ "Brooklyn",
+                         "Rockaway" ~ "Queens",
+                         "Tallman Island" ~ "Queens",
+                         "Wards Island" ~ "Manhattan"
+                         )
+  ) |>
+  mutate (borough_id = as.factor(case_match(
+      boroughs,
+      "Manhattan" ~ 0,
+      "Brooklyn" ~ 1,
+      "Bronx" ~ 2,
+      "Queens" ~ 3,
+      "Staten Island" ~ 4
+    ))
+    )
+  
+data_reg =
+  borough_wastewater %>% 
+  mutate (season = case_match(month,
+                        "January" ~ "Winter",
+                        "February" ~ "Winter",
+                        "March" ~ "Spring",
+                        "April" ~ "Spring",
+                        "May" ~ "Spring",
+                        "June" ~ "Summer",
+                        "July" ~ "Summer",
+                        "August" ~ "Summer",
+                        "September" ~ "Autumn",
+                        "October" ~ "Autumn",
+                        "November" ~ "Autumn",
+                        "December" ~ "Winter")) %>% 
+  mutate (season_id = as.factor(case_match(
+      season,
+      "Summer" ~ 0,
+      "Autumn" ~ 1,
+      "Winter" ~ 2,
+      "Spring" ~ 3,
+    ))
+    )
+
+```
+<br />
+
+We are interested in whether there are potential relationships: 1) between SARS-CoV-2 concentrations in wastewater and different wastewater plants by their borough location and 2) between SARS-CoV-2 concentrations in wastewater and different seasons across the year. We hope to describe patterns according to borough and season fluctuation using ANOVA and logistic regression analysis on this dataset and hopefully assist stakeholders on future policy-making processes. We tested SARS-CoV-2 concentrations in wastewater by grouping Wastewater Resource Recovery Facilities together with respect to their borough locations, including Manhattan, Brooklyn, Bronx, Queens, and Staten Island, with Manhattan as the reference. We then tested SARS-CoV-2 concentrations in wastewater by grouping  months with respect to four seasons, including summer, autumn, winter, and spring, with summer as the reference.
+
+<br />
+
+### Anova for Borough
+
+<br />
+
+#### Distribution of Average Covid-19 Wastewater Concentration By Borough
+
+<br />
+
+```{r boxplot data, message=FALSE, warning=FALSE}
+
+borough_wastewater_box <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate(
+    boroughs = case_match(wrrf_name,
+                         "26th Ward" ~ "Brooklyn",
+                         "Bowery Bay" ~ "Manhattan",
+                         "Coney Island" ~ "Brooklyn",
+                         "Hunts Point" ~ "Bronx",
+                         "Jamaica Bay" ~ "Queens",
+                         "Newtown Creek" ~ "Queens",
+                         "North River" ~ "Manhattan",
+                         "Oakwood Beach" ~ "Staten Island",
+                         "Owls Head" ~ "Brooklyn",
+                         "Port Richmond" ~ "Staten Island",
+                         "Red Hook" ~ "Brooklyn",
+                         "Rockaway" ~ "Queens",
+                         "Tallman Island" ~ "Queens",
+                         "Wards Island" ~ "Manhattan"
+                         )
+  ) %>% 
+  plot_ly(
+    y = ~boroughs,
+    x = ~avg_conc,
+    type = "box",
+    color = ~boroughs,
+    colors = "viridis"
+  ) %>%
+  layout(
+    yaxis = list(title = "Boroughs"),
+    xaxis = list(title = "Average Covid-19 Wastewater Concentration"),
+    showlegend = FALSE
+  )
+
+borough_wastewater_box
+
+```
+
+
+<br />
+
+#### ANOVA for Boroughs
+
+```{r Anova for boroughs, message=FALSE, warning=FALSE}
+# Perform ANOVA test
+model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
+
+tidy_anova_borough <-
+  tidy(model_anova_borough) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
+
+tidy_anova_borough
+```
+
+<br />
+
+•	Between-group (Borough):
+<br />
+•	df (Degrees of Freedom): 4
+<br />
+•	sumsq (Sum of Squares): 202875085
+<br />
+•	meansq (Mean Square): 50718771
+<br />
+•	statistic (F-statistic): 0.4687958
+<br />
+•	p-value: 0.7586387
+<br />
+•	Within-group (Residuals):
+<br />
+•	df (Degrees of Freedom): 331
+<br />
+•	sumsq (Sum of Squares): 35810713645
+<br />
+•	meansq (Mean Square): 108189467
+<br />
+
+Since the p-value is greater than the significance level (0.469 > 0.05), we fail to reject the null hypothesis that different boroughs do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is no significant between group difference in the mean SARS-COV-2 concentration among the 5 boroughs in NYC from 2021 to 2022. 
+
+<br />
+
+### Anova for Seasons
+
+<br />
+
+#### Distribution of Average Covid-19 Wastewater Concentration By Season
+
+<br />
+
+```{r, message=FALSE, warning=FALSE}
+
+season_wastewater_box <-
+  nyc_wastewater |>
+  filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
+  group_by(month, year, wrrf_name) |>
+  summarise(avg_conc = mean(concentration)) |>
+  mutate (season = case_match(month,
+                        "January" ~ "Winter",
+                        "February" ~ "Winter",
+                        "March" ~ "Spring",
+                        "April" ~ "Spring",
+                        "May" ~ "Spring",
+                        "June" ~ "Summer",
+                        "July" ~ "Summer",
+                        "August" ~ "Summer",
+                        "September" ~ "Autumn",
+                        "October" ~ "Autumn",
+                        "November" ~ "Autumn",
+                        "December" ~ "Winter")) %>% 
+  plot_ly(
+    y = ~season,
+    x = ~avg_conc,
+    type = "box",
+    color = ~season,
+    colors = "viridis"
+  ) %>%
+  layout(
+    yaxis = list(title = "Season"),
+    xaxis = list(title = "Average Covid-19 Wastewater Concentration"),
+    showlegend = FALSE
+  )
+
+season_wastewater_box
+```
+
+<br />
+
+#### Anova for Seasons
+
+```{r Anova for seasons, message=FALSE, warning=FALSE}
+# Perform ANOVA test
+model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
+
+tidy_anova_season <-
+  tidy(model_anova_season) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
+
+tidy_anova_season
+```
+
+<br />
+
+•	Between-group (Seasons):
+<br />
+•	df (Degrees of Freedom): 3
+<br />
+•	sumsq (Sum of Squares): 8191721366
+<br />
+•	meansq (Mean Square): 2730573789
+<br />
+•	statistic (F-statistic): 32.5841
+<br />
+•	p-value: 1.7e-18
+<br />
+•	Within-group (Residuals):
+<br />
+•	df (Degrees of Freedom): 332
+<br />
+•	sumsq (Sum of Squares): 27821867364
+<br />
+•	meansq (Mean Square): 83800805
+<br />
+
+Since the p-value is less than the significance level (<< 0.05), we reject the null hypothesis that different seasons do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is a significant difference in the mean SARS-COV-2 concentration among the 4 seasons from 2021 to 2022. However, the ANOVA test does not tell us which specific groups are different.
+
+<br />
 
 ### Logistic Regression
 
-*If you undertake formal statistical analyses, describe these in detail*
-Discussion: What were your findings? Are they what you expect? What insights into the data can you make?
-As this will be your only chance to describe your project in detail, make sure that your report is a standalone document that fully describes your process and results. We also expect you to write high-quality code that is understandable to an outside reader. Coding collaboratively and actively reviewing code within the team will help with this
+```{r, message=FALSE, warning=FALSE}
+data_fit_logistic <-
+  glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg)
 
+# Get summary of the logistic regression model
+tidy_log <-
+  tidy(data_fit_logistic) %>% 
+  kbl() %>% 
+  kable_material(
+    c("striped", "hover")
+  ) 
+
+tidy_log
+```
+
+<br />
+
+Then, we tried to fit regression models by using borough_id and season_id as explanatory variables and the average SARS-CoV-2 concentrations in wastewater as response variables. From the result, almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2 (indicating winter). Therefore, we can conclude that there could be an association between the average SARS-CoV-2 concentrations in wastewater and winter as an explanatory variable.
+
+<br />
+
+## Discussion
+<br />
