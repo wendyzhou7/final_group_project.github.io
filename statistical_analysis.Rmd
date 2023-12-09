@@ -231,15 +231,25 @@ tidy_anova_borough
 <br />
 
 •	Between-group (Borough):
+<br />
 •	df (Degrees of Freedom): 4
+<br />
 •	sumsq (Sum of Squares): 202875085
+<br />
 •	meansq (Mean Square): 50718771
+<br />
 •	statistic (F-statistic): 0.4687958
+<br />
 •	p-value: 0.7586387
+<br />
 •	Within-group (Residuals):
+<br />
 •	df (Degrees of Freedom): 331
+<br />
 •	sumsq (Sum of Squares): 35810713645
+<br />
 •	meansq (Mean Square): 108189467
+<br />
 
 Since the p-value is greater than the significance level (0.469 > 0.05), we fail to reject the null hypothesis that different boroughs do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is no significant between group difference in the mean SARS-COV-2 concentration among the 5 boroughs in NYC from 2021 to 2022. 
 
@@ -310,15 +320,25 @@ tidy_anova_season
 <br />
 
 •	Between-group (Seasons):
+<br />
 •	df (Degrees of Freedom): 3
+<br />
 •	sumsq (Sum of Squares): 8191721366
+<br />
 •	meansq (Mean Square): 2730573789
+<br />
 •	statistic (F-statistic): 32.5841
+<br />
 •	p-value: ~0
+<br />
 •	Within-group (Residuals):
+<br />
 •	df (Degrees of Freedom): 332
+<br />
 •	sumsq (Sum of Squares): 27821867364
+<br />
 •	meansq (Mean Square): 83800805
+<br />
 
 Since the p-value is less than the significance level (<< 0.05), we reject the null hypothesis that different seasons do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is a significant difference in the mean SARS-COV-2 concentration among the 4 seasons from 2021 to 2022. However, the ANOVA test does not tell us which specific groups are different.
 
