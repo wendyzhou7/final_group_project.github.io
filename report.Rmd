@@ -35,7 +35,7 @@ According to the National Center for Disease and Control (CDC), wastewater surve
 4. Are seasons and NYC boroughs a significant predictor of COVID-19 wastewater concentrations?
 
 
-With our interest in the current COVID-19 climate in NYC, we first create data visualizations to see what trends are apparent. We saw a clear trend in high COVID-19 concentrations in the winter time and lower in the winter times. However, we knew we needed to test this hypothesis to make any conclusions. For the purposes of this project, takign locations into consideration would allow us to demonstrate our data analysis and visualizations skills.
+With our interest in the current COVID-19 climate in NYC, we first create data visualizations to see what trends are apparent. We saw a clear trend in high COVID-19 concentrations in the winter time and lower in the winter times. However, we knew we needed to test this hypothesis to make any conclusions. For the purposes of this project, taking locations into consideration would allow us to demonstrate our data analysis and visualizations skills.
 
 </div>
 
