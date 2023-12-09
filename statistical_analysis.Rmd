@@ -145,9 +145,9 @@ data_reg =
   mutate (season_id = as.factor(case_match(
       season,
       "Summer" ~ 0,
-      "Winter" ~ 1,
-      "Spring" ~ 2,
-      "Autumn" ~ 3,
+      "Autumn" ~ 1,
+      "Winter" ~ 2,
+      "Spring" ~ 3,
     ))
     )
 
