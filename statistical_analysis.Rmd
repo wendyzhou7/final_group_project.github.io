@@ -92,14 +92,7 @@ nyc_wastewater <-
                         "11" = "November",
                         "12" = "December")) |>
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation, -lon_wwtp, -lat_wwtp)
-```
 
-<br />
-
-Manhattan, Brooklyn, Bronx, Queens, Staten Island are assigned 0-4, Manhattan is assigned as reference. 
-Summer, Spring, Autumn, Winter are assigned 0-3, Summer is assigned as reference.
-
-```{r making boroughs as categorical variables, message=FALSE}
 borough_wastewater <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -151,9 +144,9 @@ data_reg =
   mutate (season_id = as.factor(case_match(
       season,
       "Summer" ~ 0,
-      "Spring" ~ 1,
-      "Autumn" ~ 2,
-      "Winter" ~ 3
+      "Winter" ~ 1,
+      "Spring" ~ 2,
+      "Autumn" ~ 3,
     ))
     )
 
@@ -194,11 +187,7 @@ borough_wastewater_box <-
   )
 
 borough_wastewater_box
-```
 
-<br />
-
-```{r, message=FALSE}
 season_wastewater_box <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -243,9 +232,20 @@ We created borough_id as a categorical variable by grouping wastewater plants ac
 ### Anova for boroughs
 
 ```{r Anova for boroughs, message=FALSE, warning=FALSE}
+# Perform ANOVA test
 model_anova_borough <- aov(avg_conc ~ borough_id, data = borough_wastewater)
-summary(model_anova_borough)
 
+# Get ANOVA table
+anova_borough_table <- summary(model_anova_borough)
+
+# Extract ANOVA table information
+anova_borough_results <- anova_borough_table[[1]]
+
+# Format ANOVA results into a table
+formatted_borough_table <- as.data.frame(anova_borough_results)
+
+# Print the formatted ANOVA table
+print(formatted_borough_table)
 ```
 
 <br />
@@ -253,29 +253,51 @@ summary(model_anova_borough)
 ### Anova for seasons
 
 ```{r Anova for seasons, message=FALSE}
+# Perform ANOVA test
 model_anova_season <- aov(avg_conc ~ season_id, data = data_reg)
 
-summary(model_anova_season)
+# Get ANOVA table
+anova_table_season <- summary(model_anova_season)
+
+# Extract ANOVA table information
+anova_results_season <- anova_table_season[[1]]
+
+# Format ANOVA results into a table
+formatted_table_season <- as.data.frame(anova_results_season)
+
+# Print the formatted ANOVA table for seasons
+print(formatted_table_season)
+
 ```
 
 <br />
 
-First, we run ANOVA test for borough_id and season_id to see if there is a significant association between the average of wastewater covid-19 concentrations with different boroughs locations. Since p-value is 0.469, which is greater than alpha = 0.05, there is no sufficient evidence to support a relationship between borough_id and the average wastewater covid-19 concentration. Then we applied the same method to season_id. The p-value is 2e-16, which is smaller than alpha = 0.05. Therefore, there is sufficient evidence to support a relationship between season_id and the average wastewater covid-19 concentration. 
+First, we run ANOVA test for borough_id and season_id to see if there is a significant association between the average of wastewater covid-19 concentrations with different boroughs locations. Since p-value is 0.469, which is greater than alpha = 0.05, there is no sufficient evidence to support a relationship between borough_id and the average wastewater covid-19 concentration. Then we applied the same method to season_id. The p-value is 1.7e-18, which is smaller than alpha = 0.05. Therefore, there is sufficient evidence to support a relationship between season_id and the average wastewater covid-19 concentration. 
 
 <br />
 
 ### Logistic Regression
 
 ```{r, message=FALSE, warning=FALSE}
-data_fit_logistic =
+data_fit_logistic <-
   glm(avg_conc ~ borough_id + relevel(season_id,ref = "0"), data = data_reg)
 
-summary(data_fit_logistic)
+# Get summary of the logistic regression model
+summary_data_fit <- summary(data_fit_logistic)
+
+# Extract coefficients and their statistics
+coef_table <- summary_data_fit$coefficients
+
+# Format coefficients table for better readability
+formatted_coef_table <- as.data.frame(coef_table)
+
+# Print the formatted coefficients table
+print(formatted_coef_table)
+
 ```
 
 
 <br />
-
 
 
 In addition, we tried to fit a regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.
