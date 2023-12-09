@@ -71,6 +71,13 @@ For our purposes, we have loaded the following R packages:
 
 * `knitr`
 
+* `broom`
+
+* `kableExtra`
+
+* `plotly`
+
+
 ```{r message=FALSE}
 library(tidyverse)
 library(ggridges)
@@ -81,6 +88,8 @@ library(leaflet)
 library(plotly)
 library(readr)
 library(knitr)
+library(broom)
+library(kableExtra)
 ```
 
 
@@ -133,7 +142,7 @@ map_df <-
 ```
 <br />
 
-We decided to analyze COVID-19 concentrations from the year 2021 and 2022 as these are recent years and would be most relevant to understand current the COVID cliamte. We are able to create visualizations with the 2023 observations, but we decided to leave it out of our final analysis because data was only taken from January to April of 2023. We focused only on COVID-19 concentrations that were collected using RT-qPCR because dPCR only had about 50 observations (not enough for thorough analysis).
+The dataset contains SARS-COV-2 concentration(N1/L) tested from various WRRFs in NYC from late 2020 to 2023 using RT-qPCR and dPCR techniques. We decided to place our focus on analyzing COVID-19 concentrations of the year 2021 and 2022 as these are most relevant to understand the SARS-COV-2 pandemic. As technology advances, scientists are gradually shifting their testing focus from RT-qPCR to dPCR technique. It would be interesting to compare the significances between the two testing technologies, however, dPCR do not have enough sample to be considered during the period 2020-2022. We are able to create visualizations with the 2023 observations, but we decided to leave it out of our final analysis because data was only taken from January to April of 2023. Therefore we only focus on RT-qPCR testing results collected during the pandemic (2021 to 2022). 
 
 <br />
 ```{r clean the waste water data file}
@@ -143,9 +152,11 @@ wwtp_df <-
 
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
 ```
+<br />
+
+
 
 <br />
-After cleaning, we merged the mapping and wastewater COVID-19 concentrations datasets to `nyc_wastewater`.
 ```{r choose the variables from the merged data file, message=FALSE}
 nyc_wastewater <-
   merge_df |>
@@ -177,7 +188,9 @@ head(nyc_wastewater) %>%
 ```
 <br />
 
-The raw mapping dataset has 58503 observations and 25 variables. For our purposes, we only kept 5 variables including waste_id, wttp_name, lat_wttp, long_wttp, and wrrf_abbreviation. The raw wastewater dataset has 4270 observations and 9 variables. For our purposes, we extracted the test date to month, year, and kept wrrf_name, concentration (n1 copies/L), and technology.
+The raw mapping dataset (HydroWASTE_v10) has 58503 observations and 25 variables, including nations, WWTP(Waste Water Treatment Plant) names, locational data, abrreations, population served by individual WTTP, and many more. For our mapping purposes, we only kept 4 variables including waste_id, wttp_name, lat_wttp, lon_wttp to keep track of the WWTP specifically those located in New York City. 
+<br />
+The raw wastewater dataset has 4270 observations and 9 variables. For our purposes, we cleaned and extracted the test date to month, year, and kept wrrf_name, concentration (n1 copies/L), and testing technology used (RT-qPCR / dPCR).
 
 Our final merged dataset (mapping and wastewater) for analysis is called **nyc_wastewater** with 4129 observations, and 8 variables. Those include lat_wttp, lon_wttp, month, day, year, wrrf_name, concentration, technology.
 
@@ -236,7 +249,7 @@ dpcr <-
 
 <br />
 
-## Exploratory analysis
+## Exploratory Analysis
 
 Let's take a look at some graphical visualizations to identify any trends.
 

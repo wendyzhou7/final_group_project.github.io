@@ -34,6 +34,7 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
+<br />
 
 Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 Wastewater Resource Recovery Facilities(WRRFs) located in the New York City. However, the visualization process is not easily achieved as the NYC wastewater dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of WRRFs within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for WRRFs in many countries, containing USA. 
 
