@@ -55,14 +55,16 @@ head(map) %>%
 wwtp <-
   read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
 
-head(wwtp) %>% 
+wwtp %>% 
   knitr::kable(digits = 3) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-
 <br />
 
+Load two datasets and decide what varibles we will working with in addition to do data clean and combine it into one dataset called nyc_wastewater.
+
+<br />
 ```{r clean the mapping data file and rename plant names}
 map_df <-
   map |>
@@ -84,25 +86,13 @@ map_df <-
     "New York C   Newtown Creek WPCP" = "NC",
     "New York C   Wards Island WPCP" = "WI",
   ))
-```
 
-<br />
-
-```{r clean the waste water data file}
 wwtp_df <-
   wwtp |>
   janitor:: clean_names()
-```
 
-<br />
-
-```{r merge the waste water data file and mapping data file}
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
-```
 
-<br />
-
-```{r choose the variables from the merged data file}
 nyc_wastewater <-
   merge_df |>
   rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
@@ -126,7 +116,7 @@ nyc_wastewater <-
                         "12" = "December")) |>
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
 
-head(nyc_wastewater) %>% 
+nyc_wastewater %>% 
   knitr::kable(digits = 3) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
@@ -169,8 +159,6 @@ overall_trend |>
 
 <br />
 
-### Sub dataset
-
 ```{r}
 rtqpcr <-
   nyc_wastewater |>
@@ -182,7 +170,9 @@ dpcr <-
   filter(year %in% c(2021, 2022), technology == "dPCR") |>
   select(-lat_wwtp, -lon_wwtp)
 ```
-dpcr is not large enough to do data analysis.
+
+
+By comparing datasets from different techniques (RT-qPCR and dPCR), we found that "dPCR" had only few observations, which was insufficient for some analysis to show trends in Covid- 19 concentrations. So we decide to use only the dataset with technology "RT-qPCR". Also "RT-qPCR" data for 2020 and 2023 are incomplete, so we only used data from 2021 and 2022 for our analysis.
 
 <br />
 
@@ -237,7 +227,7 @@ spaghetti_plot_2022
 
 <br />
 
-### tables 2021
+### Box Plot for Average Covid-19 Concentration of each waste water facility in 2021 in New York City
 
 ```{r}
 box_plot_2021 <- rtqpcr %>%
@@ -263,7 +253,7 @@ box_plot_2021
 
 <br />
 
-### tables 2022
+### Box Plot for Average Covid-19 Concentration of each waste water facility in 2021 in New York City
 
 ```{r}
 box_plot_2022 <- rtqpcr %>%
@@ -285,16 +275,3 @@ box_plot_2022 <- rtqpcr %>%
 
 box_plot_2021
 ```
-
-<br />
-
-## Questions
-1 The concentration of covid for each station on average
-
-<br />
-
-2 literature review for two diff tech (RT-qPCR, dPCR)
-
-<br />
-
-3 Year 2021 and 2022
