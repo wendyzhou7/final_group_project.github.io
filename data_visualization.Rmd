@@ -21,10 +21,7 @@ library(knitr)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
-	message = FALSE,
-	fig.width = 16, 
-  fig.height = 12,
-  out.width = "90%"
+	message = FALSE
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -38,7 +35,7 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 waste water facilities located in the New York state. However, the visualization process is not easily achieved as the NYC waste water dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of wastewater facilities within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for waste water facilities in many countries, containing USA. 
+Our goal in this project is to visualize and analyze the SARS-CoV-2 concentrations within the 14 waste water facilities located in the New York City. However, the visualization process is not easily achieved as the NYC waste water dataset does not contain longitudinal and latitudinal information about the facilities. In order to successfully map the distribution of wastewater facilities within NYC we need to find a dataset with locational information.We found them in an international dataset "HydroWASTE" which contains the geographic data for waste water facilities in many countries, containing USA. 
 
 - How to create a dataset which contains both SARS-CoV-2 data and geographic location data?
 - what is the overall SARS-CoV-2 distribution inside waste water across NYC over the years of the pandemic?
@@ -137,7 +134,7 @@ head(nyc_wastewater) %>%
 
 <br />
 
-Creating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York State from 2020 to 2023.
+Creating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
 
 ```{r}
 overall_trend <-
@@ -189,7 +186,7 @@ dpcr is not large enough to do data analysis.
 
 <br />
 
-### Average Covid-19 Concentration of each waste water facility in 2021 in New York State
+### Average Covid-19 Concentration of each waste water facility in 2021 in New York City
 
 ```{r}
 spaghetti_plot_2021 <-
@@ -201,17 +198,20 @@ spaghetti_plot_2021 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in New York State") + 
+       y = "Mean Covid-19 Concentration", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6))
 
 spaghetti_plot_2021
 ```
 
 <br />
 
-### Average Covid-19 Concentration of each waste water facility in 2022 in New York State
+### Average Covid-19 Concentration of each waste water facility in 2022 in New York City
 
 ```{r}
 spaghetti_plot_2022 <-
@@ -223,10 +223,14 @@ spaghetti_plot_2022 <-
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Average Covid-19 Concentration of each waste water facility", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State") + 
+       y = "Mean Covid-19 Concentration", 
+       title = "Average Covid-19 Concentration of each waste water facility in 2022 in NYC",
+       color = "Water Facility") + 
   theme(legend.position = "bottom",
-        legend.box.background = element_rect())
+        legend.box.background = element_rect(),
+        legend.key.size = unit(0.001, 'cm'),
+        axis.text.x = element_text(angle = 60, hjust = 1),
+        legend.text = element_text(size = 6)) 
 
 spaghetti_plot_2022
 ```

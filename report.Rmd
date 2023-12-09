@@ -140,11 +140,10 @@ We decided to analyze COVID-19 concentrations from the year 2021 and 2022 as the
 wwtp_df <-
   wwtp |>
   janitor:: clean_names()
-```
-<br />
-```{r merge the waste water data file and mapping data file}
+
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
 ```
+
 <br />
 After cleaning, we merged the mapping and wastewater COVID-19 concentrations datasets to `nyc_wastewater`.
 ```{r choose the variables from the merged data file, message=FALSE}
@@ -206,7 +205,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 <br />
 
-Here, we are reating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York State from 2020 to 2023.
+Here, we are reating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
 
 <br />
 ```{r message=FALSE, warning=FALSE}
@@ -270,12 +269,12 @@ spaghetti_plot_2021 <-
   filter(year == 2021) |>
   group_by(month, wrrf_name) |>
   summarise(avg_conc = mean(concentration)) |>
-  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name, colors = "viridis")) +
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in New York State") + 
+       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
         legend.key.size = unit(0.001, 'cm'),
@@ -294,12 +293,12 @@ spaghetti_plot_2022 <-
   filter(year == 2022) |>
   group_by(month, wrrf_name) |>
   summarise(avg_conc = mean(concentration)) |>
-  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name, colors = "viridis")) +
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
        y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2022 in New York State",
+       title = "Average Covid-19 Concentration of each waste water facility in 2022 in NYC",
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
