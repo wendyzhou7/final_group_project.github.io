@@ -365,4 +365,4 @@ tidy_log
 <br />
 
 
-In addition, we tried to fit a regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.
+In addition, we tried to fit a logistic regression model by using borough_id and season_id as explanatory variables and the average wastewater covid-19 concentration as response variable. Almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2, indicating winter. Therefore, we can conclude that there could be a trend between the average concentration of wastewater covid-19 cases with winter season.

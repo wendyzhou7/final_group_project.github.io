@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
     message = FALSE,
     fig.width = 16, 
   fig.height = 12,
-  out.width = "90%"
+  out.width = "95%"
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))

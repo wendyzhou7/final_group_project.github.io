@@ -263,18 +263,17 @@ Let's take a look at some graphical visualizations to identify any trends.
 <br />
 
 #### Average Covid-19 Concentration by location in 2021
-```{r message=FALSE}
+```{r, message = FALSE}
 spaghetti_plot_2021 <-
   rtqpcr |>
   filter(year == 2021) |>
   group_by(month, wrrf_name) |>
   summarise(avg_conc = mean(concentration)) |>
-  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name, colors = "viridis")) +
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Mean Covid-19 Concentration", 
-       title = "Average Covid-19 Concentration of each waste water facility in 2021 in NYC",
+       y = "Mean Covid-19 Concentration (N1/L)", 
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
@@ -288,17 +287,17 @@ spaghetti_plot_2021
 <br />
 
 #### Average Covid-19 Concentration by location in 2022
-```{r message=FALSE}
+```{r, message = FALSE}
 spaghetti_plot_2022 <-
   rtqpcr |>
   filter(year == 2022) |>
   group_by(month, wrrf_name) |>
   summarise(avg_conc = mean(concentration)) |>
-  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name, colors = "viridis")) +
+  ggplot(aes(x = month, y = avg_conc, color = wrrf_name, group = wrrf_name)) +
   geom_line(alpha = .5) +
   geom_point(alpha = .5) +
   labs(x = "Month", 
-       y = "Mean Covid-19 Concentration",
+       y = "Mean Covid-19 Concentration (N1/L)", 
        color = "Water Facility") + 
   theme(legend.position = "bottom",
         legend.box.background = element_rect(),
@@ -314,7 +313,7 @@ spaghetti_plot_2022
 ### Trends: Boxplots
 
 #### Average Covid-19 Concentration by waste water facility in 2021
-```{r message=FALSE}
+```{r, message = FALSE}
 box_plot_2021 <- rtqpcr %>%
   filter(year == 2021) %>%
   group_by(month, wrrf_name) %>%
@@ -327,22 +326,23 @@ box_plot_2021 <- rtqpcr %>%
     colors = "viridis"
   ) %>%
   layout(
-    xaxis = list(title = "Mean concentration (N/L)"),
-    yaxis = list(title = "Area"),
+    xaxis = list(title = "Mean concentration (N1/L)"),
+    yaxis = list(title = "Water Facility"),
     showlegend = FALSE
   )
 
 box_plot_2021
 
 ```
+```
 
 <br />
 
 #### Average Covid-19 Concentration by waste water facility in 2022
-```{r message=FALSE}
-box_plot_2022 <- rtqpcr |> 
-  filter(year == 2022) |> 
-  group_by(month, wrrf_name) |> 
+```{r}
+box_plot_2022 <- rtqpcr %>%
+  filter(year == 2022) %>%
+  group_by(month, wrrf_name) %>%
   summarise(avg_conc = mean(concentration)) %>%
   plot_ly(
     x = ~avg_conc,
@@ -350,14 +350,14 @@ box_plot_2022 <- rtqpcr |>
     type = "box",
     color = ~wrrf_name,
     colors = "viridis"
-  ) |> 
+  ) %>%
   layout(
-    xaxis = list(title = "Mean concentration (N/L)"),
-    yaxis = list(title = "Area"),
+    xaxis = list(title = "Mean concentration (N1/L)"),
+    yaxis = list(title = "Water Facility"),
     showlegend = FALSE
   )
 
-box_plot_2021
+box_plot_2022
 ```
 <br />
 
