@@ -1,5 +1,5 @@
 ---
-title: "NYC Wastewater COVID-19 Concentrations"
+title: "SARS-COV-2 Hidden in NYC Wastewater"
 output:
   html_document:
     toc: true
@@ -9,10 +9,11 @@ output:
 
 <br />
 
-<center>
-![](image/waste_water_1.png){width=65%} 
+![](image/waste_water_2.png){width=95%} 
 
 <br />
+
+<center>
 
 ### Screencast
 
@@ -34,4 +35,4 @@ Zhiqi Liu (al4327)
 <br />
 
 <center>
-![](image/waste_water_2.png){width=95%} 
+![](image/waste_water_1.png){width=65%} 

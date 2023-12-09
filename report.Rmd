@@ -205,7 +205,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 <br />
 
-Here, we are reating the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
+Here, we are reaDing the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
 
 <br />
 ```{r message=FALSE, warning=FALSE}
@@ -218,24 +218,7 @@ overall_trend <-
   unite("year_month",year, month, sep = "_") |>
   mutate(month_avg = ymd(paste0(year_month, "_01")))
 ```
-<br />
 
-Plotting Scatterplot
-```{r message=FALSE, warning=FALSE}
-overall_trend |>
-  ggplot(aes(x = month_avg, y = avg_conc)) + 
-  geom_point(size = 3, alpha = .7) +
-  geom_smooth(size = 2, se = FALSE, alpha = .3) +
-    labs(
-      x = "Time", 
-      y = "Average Covid-19 concentration (N/L)") + 
-  theme(axis.line = element_line(color = "grey"), 
-      panel.background = element_blank(), 
-      legend.position = "none", 
-      panel.grid.major = element_line(color = "light grey", linetype = "dashed"),
-      plot.title = element_text(hjust = 0.5)) + 
-  ggtitle("Monthly average Covid-19 concentration in waste water in NY measured from 2020 to 2023")
-```
 <br />
 ```{r subdatset, message=FALSE}
 rtqpcr <-
@@ -256,6 +239,24 @@ dpcr <-
 ## Exploratory analysis
 
 Let's take a look at some graphical visualizations to identify any trends.
+
+<br />
+
+#### Monthly Average Covid-19 Concentration in Wastewater in NYC from 2020 to 2023
+```{r message=FALSE, warning=FALSE}
+overall_trend |>
+  ggplot(aes(x = month_avg, y = avg_conc)) + 
+  geom_point(size = 3, alpha = .7) +
+  geom_smooth(size = 2, se = FALSE, alpha = .3) +
+    labs(
+      x = "Time", 
+      y = "Average Covid-19 concentration (N/L)") + 
+  theme(axis.line = element_line(color = "grey"), 
+      panel.background = element_blank(), 
+      legend.position = "none", 
+      panel.grid.major = element_line(color = "light grey", linetype = "dashed"),
+      plot.title = element_text(hjust = 0.5))
+```
 
 <br />
 
@@ -339,7 +340,7 @@ box_plot_2021
 <br />
 
 #### Average Covid-19 Concentration by waste water facility in 2022
-```{r}
+```{r, message = FALSE}
 box_plot_2022 <- rtqpcr %>%
   filter(year == 2022) %>%
   group_by(month, wrrf_name) %>%
