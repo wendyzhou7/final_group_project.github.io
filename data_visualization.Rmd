@@ -314,5 +314,3 @@ box_plot_2022
 <br />
 
 The 2022 box plots seem to reflect the trends we also see from our corresponding spaghetti plot. Similar to 2021, it appears that Owls Head water facility also has the most variability in addition to Jamaica Bay. There is an overall higher mean concentration across all water facilities in 2022 with the majority of the facilities having a >10,000 N1/L COVID-19 mean concentration. Bowery Bay, Jamaica Bay, Owls Head, and Tallman Island water facilities have >20,000 N1/L COVID-19 mean concentration.
-
-<br />

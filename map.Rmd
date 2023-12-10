@@ -148,5 +148,3 @@ A map is constructed using the Leaflet package. Initially, the average concentra
 The Leaflet map is generated using the resulting dataframe, featuring tiles from the CartoDB Positron map as a base layer. Circle markers are incorporated to denote each WRRF's geographical location, and the radius and color of the circles are adjusted for enhanced visualization. Popup information is included, showcasing the WRRF name and the mean concentration of SARS-CoV-2 (N1/L).
 
 The map offers an vivid depiction of the distribution of SARS-CoV-2 concentrations across different WRRFs in New York City, allowing for visual distinctions among areas with higher or lower concentrations, and the popup information facilitates more detailed insights into specific WRRFs.
-
-
