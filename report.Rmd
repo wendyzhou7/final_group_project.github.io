@@ -218,7 +218,7 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 * `wrrf_name`: Wastewater Resource Recovery Facility (waste water treatment plant) where sample was taken
 
-* `concentration`: Concentration of the N1 target of SARS-CoV2 genetic material measured in wastewater influent.
+* `concentration`: Concentration of the N1/L target of SARS-CoV2 genetic material measured in wastewater influent
 
 * `technology`: COVID-19 concentration test detection method (either RT-qPCR or dPCR)
 
