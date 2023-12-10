@@ -33,7 +33,7 @@ According to the National Center for Disease and Control (CDC), wastewater surve
 1. What trends can we see from the NYC wastewater COVID-19 concentrations?
 2. Is there a significant difference in NYC COVID-19 wastewater concentrations by season?
 3. Is there a significant difference in COVID-19 wastewater concentrations by NYC borough?
-4. Are seasons and NYC boroughs a significant predictor of COVID-19 wastewater concentrations?
+4. Are seasons and NYC boroughs significant predictors of COVID-19 wastewater concentrations?
 
 
 With our interest in the current COVID-19 climate in NYC, we first create data visualizations to see what trends are apparent. We saw a clear trend in high COVID-19 concentrations in the winter time and lower in the winter times. However, we knew we needed to test this hypothesis to make any conclusions. For the purposes of this project, taking locations into consideration would allow us to demonstrate our data analysis and visualizations skills.
