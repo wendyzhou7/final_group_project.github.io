@@ -17,22 +17,23 @@ output:
 <br />
 
 ![](image/waste_water_2.png){width=95%} 
-<br />
-
-## "In the swirling currents beneath the city that never sleeps, a microscopic secret has been brewing."
 
 <br />
 
-## "Unseen, unheard, yet silently thriving – SARS-CoV-2"
+## *In the swirling currents beneath the city that never sleeps, a microscopic secret has been brewing*
+
+<br />
+
+## *Unseen, unheard, yet silently thriving – SARS-CoV-2*
 <br />
 
 <center>
 
-[Screencast](https://youtu.be/05YTog7KuJk)
+## [Screencast](https://youtu.be/05YTog7KuJk)
 
 <br />
 
-### Collaborators
+### *Collaborators*
 <br />
 
 Beicheng Huang (bh2852)

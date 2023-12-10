@@ -6,6 +6,7 @@ output:
     code_folding: hide
     toc_float: true
 ---
+<br />
 
 ## Motivation
 <div class="well well-sm">
@@ -92,10 +93,13 @@ library(broom)
 library(kableExtra)
 ```
 
+<div class="well well-sm">
 
 First, we imported the SARS-CoV-2 concentrations measured in NYC Wastewater and HydroWaste mapping data using the read_csv.
 
 Here is a glimpse of the types of variables we have:
+
+</div>
 
 ```{r message=FALSE,warning=FALSE}
 map <-
@@ -110,11 +114,12 @@ head(map) %>%
 wwtp <-
   read_csv("data/SARS-CoV-2_concentrations_measured_in_NYC_Wastewater_20231129.csv")
 
-head(wwtp) %>% 
+wwtp %>% 
   knitr::kable(digits = 3) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
+
 <br />
 
 ### Data Cleaning
@@ -142,7 +147,11 @@ map_df <-
 ```
 <br />
 
+<div class="well well-sm">
+
 The dataset contains SARS-COV-2 concentration(N1/L) tested from various WRRFs in NYC from late 2020 to 2023 using RT-qPCR and dPCR techniques. We decided to place our focus on analyzing COVID-19 concentrations of the year 2021 and 2022 as these are most relevant to understand the SARS-COV-2 pandemic. As technology advances, scientists are gradually shifting their testing focus from RT-qPCR to dPCR technique. It would be interesting to compare the significances between the two testing technologies, however, dPCR do not have enough sample to be considered during the period 2020-2022. We are able to create visualizations with the 2023 observations, but we decided to leave it out of our final analysis because data was only taken from January to April of 2023. Therefore we only focus on RT-qPCR testing results collected during the pandemic (2021 to 2022). 
+
+</div>
 
 <br />
 ```{r clean the waste water data file}
@@ -151,13 +160,7 @@ wwtp_df <-
   janitor:: clean_names()
 
 merge_df <- inner_join(map_df, wwtp_df, by = "wrrf_abbreviation")
-```
-<br />
 
-
-
-<br />
-```{r choose the variables from the merged data file, message=FALSE}
 nyc_wastewater <-
   merge_df |>
   rename(concentration = concentration_sars_co_v_2_gene_target_n1_copies_l) |>
@@ -181,18 +184,22 @@ nyc_wastewater <-
                         "12" = "December")) |>
   select(-waste_id, -test_date, -per_capita_sars_co_v_2_load_n1_copies_per_day_per_population, -population_served_estimated, -wwtp_name, -annotation, -wrrf_abbreviation)
 
-head(nyc_wastewater) %>% 
+nyc_wastewater %>% 
   knitr::kable(digits = 3) %>% 
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
 <br />
 
+<div class="well well-sm">
+
 The raw mapping dataset (HydroWASTE_v10) has 58503 observations and 25 variables, including nations, WWTP(Waste Water Treatment Plant) names, locational data, abrreations, population served by individual WTTP, and many more. For our mapping purposes, we only kept 4 variables including waste_id, wttp_name, lat_wttp, lon_wttp to keep track of the WWTP specifically those located in New York City. 
 <br />
 The raw wastewater dataset has 4270 observations and 9 variables. For our purposes, we cleaned and extracted the test date to month, year, and kept wrrf_name, concentration (n1 copies/L), and testing technology used (RT-qPCR / dPCR).
 
 Our final merged dataset (mapping and wastewater) for analysis is called **nyc_wastewater** with 4129 observations, and 8 variables. Those include lat_wttp, lon_wttp, month, day, year, wrrf_name, concentration, technology.
+
+</div>
 
 <br />
 
@@ -218,8 +225,9 @@ Our final merged dataset (mapping and wastewater) for analysis is called **nyc_w
 
 <br />
 
+<div class="well well-sm">
 Here, we are reading the dataset for an overall trend for Covid-19 concentration across the 14 waste water facilities within New York City from 2020 to 2023.
-
+</div>
 <br />
 ```{r message=FALSE, warning=FALSE}
 overall_trend <-
@@ -230,10 +238,7 @@ overall_trend <-
   summarise(avg_conc = mean(concentration)) |>
   unite("year_month",year, month, sep = "_") |>
   mutate(month_avg = ymd(paste0(year_month, "_01")))
-```
 
-<br />
-```{r subdatset, message=FALSE, warning=FALSE}
 rtqpcr <-
   nyc_wastewater |>
   filter(year %in% c(2021, 2022), technology == "RT-qPCR") |>
@@ -246,17 +251,15 @@ dpcr <-
   select(-lat_wwtp, -lon_wwtp)
 ```
 
-
 <br />
 
 ## Exploratory Analysis
-
+<div class="well well-sm">
 Let's take a look at some graphical visualizations to identify any trends.
-
+</div>
 <br />
 
 ### Overall Trend Over Pandemic
-
 <br />
 
 #### Monthly average Covid-19 concentration in wastewater in NY measured from 2020 to 2023
@@ -291,17 +294,18 @@ dpcr <-
   select(-lat_wwtp, -lon_wwtp)
 ```
 
-
+<div class="well well-sm">
 By comparing datasets from different techniques (RT-qPCR and dPCR), we found that "dPCR" had only few observations, which was insufficient for some analysis to show trends in Covid- 19 concentrations. So we decide to use only the dataset with technology "RT-qPCR". Also "RT-qPCR" data for 2020 and 2023 are incomplete, so we only used data from 2021 and 2022 for our analysis.
-
+</div>
 <br />
 
 ### NYC WRRFs Trend
 
 <br />
 
+<div class="well well-sm">
 Spaghetti plots are useful for visualizing overall trends across the 14 water facility (WRRF) groups because they display individual trajectories for each group on the same graph. We would also be able to make comparisons of patterns and variations over time. 
-
+</div>
 <br />
 
 #### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2021 in New York City
@@ -329,8 +333,9 @@ spaghetti_plot_2021
 
 <br />
 
+<div class="well well-sm">
 Based on the spaghetti plot in 2021, all water facilities follow a clear trend. The summer time months (May to July) have lowest mean wastewater COVID-19 concentrations, while the winter months (December and January) have the highest mean wastewater COVID-19 concentration. The highest mean concentration goes up to 50,000 N1/L and the lowest means go down to ~2000 N1/L.
-
+</div>
 <br />
 
 #### Average Covid-19 Concentration of each Wastewater Resource Recovery Facility in 2022 in New York City
@@ -358,12 +363,17 @@ spaghetti_plot_2022
 
 <br />
 
+<div class="well well-sm">
 Compared to 2021, 2022 water facilities have overall higher mean wastewater COVID-19 concentrations. All water facilities follow a similar  trend. In 2022, spring (March) has the lowest mean concentration of about ~5,000 N1/L across all water facilities. The winter months ( January, December, February) have the highest mean wastewater COVID-19 concentration. However, it seems that in 2022, the mean concentrations have more variability by water facility location as shown by the graph.
+
+</div>
 
 <br />
 
-We decided to use boxplots to represent the distribution of COVID-19 concentration by wastewater facility because boxplots  give concise  visual summaries of the distributions by displaying key statistics such as the median, quartiles, and potential outliers.
+<div class="well well-sm">
 
+We decided to use boxplots to represent the distribution of COVID-19 concentration by wastewater facility because boxplots  give concise  visual summaries of the distributions by displaying key statistics such as the median, quartiles, and potential outliers.
+</div>
 <br />
 
 #### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2021
@@ -392,8 +402,9 @@ box_plot_2021
 
 <br />
 
+<div class="well well-sm">
 Based on the boxplots, the Owls Head Wastewater facility has the largest interquartile range with some right-skewness, which means the average concentration varies the most in this location with outliers. The Owls Head wastewater facility has the highest median of >10,000 N/L of COVID-19 concentration while all other wastewater facilities have on average less than 10,000 N/L of COVID-19 concentration.
-
+</div>
 <br />
 
 #### Box Plot of Average Covid-19 Concentration by NYC Wastewater Resource Recovery Facility in 2022
@@ -421,7 +432,9 @@ box_plot_2022
 
 <br />
 
+<div class="well well-sm">
 The 2022 box plots seem to reflect the trends we also see from our corresponding spaghetti plot. Similar to 2021, it appears that Owls Head water facility also has the most variability in addition to Jamaica Bay. There is an overall higher mean concentration across all water facilities in 2022 with the majority of the facilities having a >10,000 N1/L COVID-19 mean concentration. Bowery Bay, Jamaica Bay, Owls Head, and Tallman Island water facilities have >20,000 N1/L COVID-19 mean concentration.
+</div>
 
 <br />
 
@@ -496,9 +509,11 @@ map_df <- left_join(nyc_wastewater, wttp_map, by = "wrrf_name")
 
 <br />
 
+<div class="well well-sm">
 Our objective is to generate a visual representation of SARS-CoV-2 concentrations in wastewater across various Wastewater Resource Recovery Facilities (WRRFs) in New York City.
 
 The first part of the code involves data loading and cleaning. For the WRRF information data, relevant columns are selected and prepared for further analysis. Abbreviations for WRRF names are established for convenient reference. Concentration data is also loaded and cleaned, and the two datasets are merged based on the WRRF abbreviation. In the merged dataset, date information is separated into day, month, and year columns, and the dataset is filtered to drop rows with missing concentration values. 
+</div>
 
 ```{r message=FALSE, warning=FALSE}
 map <-
@@ -522,17 +537,16 @@ map
 
 <br />
 
+<div class="well well-sm">
 A map is constructed using the Leaflet package. Initially, the average concentration for each WRRF is aggregated for the years 2021 and 2022, considering only data from the "RT-qPCR" technology. The original dataset is then left-joined with this summary data based on the WRRF name.
 
 The Leaflet map is generated using the resulting dataframe, featuring tiles from the CartoDB Positron map as a base layer. Circle markers are incorporated to denote each WRRF's geographical location, and the radius and color of the circles are adjusted for enhanced visualization. Popup information is included, showcasing the WRRF name and the mean concentration of SARS-CoV-2 (N1/L).
 
 The map offers an vivid depiction of the distribution of SARS-CoV-2 concentrations across different WRRFs in New York City, allowing for visual distinctions among areas with higher or lower concentrations, and the popup information facilitates more detailed insights into specific WRRFs.
-
+</div>
 <br />
 
 ## Additional analysis
-<br />
-
 ```{r load the analysis data files, message=FALSE, warning=FALSE}
 borough_wastewater <-
   nyc_wastewater |>
@@ -594,11 +608,13 @@ data_reg =
 ```
 <br />
 
+<div class="well well-sm">
 We are interested in whether there are potential relationships: 1) between SARS-CoV-2 concentrations in wastewater and different wastewater plants by their borough location and 2) between SARS-CoV-2 concentrations in wastewater and different seasons across the year. We hope to describe patterns according to borough and season fluctuation using ANOVA and logistic regression analysis on this dataset and hopefully assist stakeholders on future policy-making processes. We tested SARS-CoV-2 concentrations in wastewater by grouping Wastewater Resource Recovery Facilities together with respect to their borough locations, including Manhattan, Brooklyn, Bronx, Queens, and Staten Island, with Manhattan as the reference. We then tested SARS-CoV-2 concentrations in wastewater by grouping  months with respect to four seasons, including summer, autumn, winter, and spring, with summer as the reference.
+</div>
 
 <br />
 
-### Anova for Borough
+### ANOVA for Borough
 
 <br />
 
@@ -668,7 +684,7 @@ tidy_anova_borough
 ```
 
 <br />
-
+<div class="well well-sm">
 •	Between-group (Borough):
 <br />
 •	df (Degrees of Freedom): 4
@@ -691,10 +707,10 @@ tidy_anova_borough
 <br />
 
 Since the p-value is greater than the significance level (0.469 > 0.05), we fail to reject the null hypothesis that different boroughs do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is no significant between group difference in the mean SARS-COV-2 concentration among the 5 boroughs in NYC from 2021 to 2022. 
-
+</div>
 <br />
 
-### Anova for Seasons
+### ANOVA for Seasons
 
 <br />
 
@@ -740,7 +756,7 @@ season_wastewater_box
 
 <br />
 
-#### Anova for Seasons
+#### ANOVA for Seasons
 
 ```{r Anova for seasons, message=FALSE, warning=FALSE}
 # Perform ANOVA test
@@ -757,29 +773,30 @@ tidy_anova_season
 ```
 
 <br />
-
-•	Between-group (Seasons):
+<div class="well well-sm">
+•	Between-group     (Seasons):
 <br />
-•	df (Degrees of Freedom): 3
+•	df                (Degrees of Freedom): 3
 <br />
-•	sumsq (Sum of Squares): 8191721366
+•	sumsq             (Sum of Squares):     8191721366
 <br />
-•	meansq (Mean Square): 2730573789
+•	meansq            (Mean Square):        2730573789
 <br />
-•	statistic (F-statistic): 32.5841
+•	statistic         (F-statistic):        32.5841
 <br />
-•	p-value: 1.7e-18
+•	p-value:                                1.7e-18
 <br />
-•	Within-group (Residuals):
+•	Within-group      (Residuals):
 <br />
-•	df (Degrees of Freedom): 332
+•	df                (Degrees of Freedom): 332
 <br />
-•	sumsq (Sum of Squares): 27821867364
+•	sumsq             (Sum of Squares):     27821867364
 <br />
-•	meansq (Mean Square): 83800805
+•	meansq            (Mean Square):        83800805
 <br />
 
 Since the p-value is less than the significance level (<< 0.05), we reject the null hypothesis that different seasons do not cause differences in SARS-COV-2 concentration within NYC wastewater during 2021 to 2022. This suggests that there is a significant difference in the mean SARS-COV-2 concentration among the 4 seasons from 2021 to 2022. However, the ANOVA test does not tell us which specific groups are different.
+</div>
 
 <br />
 
@@ -802,18 +819,25 @@ tidy_log
 
 <br />
 
+<div class="well well-sm">
 Then, we tried to fit regression models by using borough_id and season_id as explanatory variables and the average SARS-CoV-2 concentrations in wastewater as response variables. From the result, almost all the p-values for each categorical variable are greater than alpha = 0.05, except for season_id = 2 (indicating winter). Therefore, we can conclude that there could be an association between the average SARS-CoV-2 concentrations in wastewater and winter as an explanatory variable.
+</div>
 
 <br />
 
 ## Discussion
 <br />
+
+<div class="well well-sm">
 We decided to analyze SARS-CoV-2 concentrations in wastewater data of New York City to understand recent post-Covid-19 trends. We used open data sources from ‘NYC Open Data’ and ‘figshare’, SARS-CoV-2 concentrations measured in NYC Wastewater (NYC Open Data) and HydroWaste Mapping data (figshare) to explore our interested questions: 1) What trends we can see from the NYC wastewater COVID-19 concentrations, 2) If there is a significant difference in NYC COVID-19 wastewater concentrations by season. 3) If there is a significant difference in COVID-19 wastewater concentrations by NYC borough. 4) If seasons and NYC boroughs are significant predictors of COVID-19 wastewater concentrations. We selected only a few variables for this study. Our final merged dataset contains 4129 observations and 8 variables, including lat_wttp, lon_wttp, month, day, year, wrrf_name, concentration, and technology. Based on the spaghetti plot we created for the years 2021 and 2022, all water facilities follow a clear trend. The summertime months (May to July) have the lowest mean wastewater COVID-19 concentrations, while the winter months (December and January) have the highest mean wastewater COVID-19 concentrations. Based on the box plot we created for the years 2021 and 2022, the Owls Head water facility also has the most variability. 
+</div>
 
 <br />
+<div class="well well-sm">
 From conducting ANOVA analyses, we did not observe any statistically significant association between SARS-CoV-2 concentrations in wastewater and boroughs. This coincides with our initial boxplot analyses of the distribution of average Covid-19 wastewater concentration by boroughs. However, we could see a potential association between average COVID-19 wastewater concentration and season, especially winter. Then, we fitted regression models using borough_id and season_id as explanatory variables and the average SARS-CoV-2 concentrations in wastewater as response variables to explore the associations. This process reinforces the result from the ANOVA test for borough variables since the p-values for each variable are not statistically significant. Even though most p-values of each season variable are not statistically significant, we observed a significant p-value ( for variable season_id2, indicating winter season, including December, January, and February.  
+</div>
 
 <br />
+<div class="well well-sm">
 It is important to note that these results do not necessarily reflect the real-world situation, as the data has several limitations. For example, we categorized months into four seasons only by the month of the year. Still, we did not consider the temperature difference among different years, given that temperature differences can affect the SARS-CoV-2 concentrations in wastewater. In addition, we only considered the technology of “RT-qPCR” used in measuring the SARS-CoV-2 concentrations in wastewater but did not select the observations measured by dPCR because of the limited number of counts. 
-
-
+</div>
